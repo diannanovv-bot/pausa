@@ -1,0 +1,1496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PAUSA</title>
+<meta name="theme-color" content="#071A33">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PAUSA">
+<meta name="application-name" content="PAUSA">
+<meta name="description" content="PAUSA helps university students rest on purpose: 3-minute resets after class and one bedtime they keep.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PAUSA · Reset your rhythm">
+<meta property="og:description" content="3-minute resets by day, one bedtime by night. Add PAUSA to your home screen.">
+<meta property="og:image" content="og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+/* PAUSA — dark-first. Layout: one iPhone-width column, view scroll area + bottom tab bar, sheets slide over. */
+:root{
+  color-scheme:dark;
+  --bg:#071A33; --bg-2:#0A2140; --surface:#0D2647; --surface-2:#123157;
+  --line:#1A3961; --line-2:#284C79;
+  --fg:#EBF4FF; --fg-2:#B9CDE8; --muted:#7F99BD;
+  --ice:#C4DDF7; --accent:#8FCBFF; --accent-ink:#062244;
+  --accent-soft:rgba(143,203,255,.14); --accent-line:rgba(143,203,255,.42);
+  --silver:#D3DFEF; --warn:#F2B48C; --warn-soft:rgba(242,180,140,.15);
+  --scrim:rgba(3,12,28,.62); --shadow:0 18px 40px rgba(1,8,22,.5);
+  --tab-bg:rgba(8,27,52,.94); --top-glow:#123A6B;
+  --cur-1:rgba(66,138,232,.42); --cur-2:rgba(143,203,255,.22); --cur-3:rgba(28,84,170,.40); --accent-hi:#C2E3FF;
+  --f-display:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --f-ui:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --f-mono:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --r-lg:22px; --r-md:14px; --r-sm:10px;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    color-scheme:light;
+    --bg:#EEF5FC; --bg-2:#E3EEF9; --surface:#FFFFFF; --surface-2:#E7F1FB;
+    --line:#D3E2F2; --line-2:#BCD1EA;
+    --fg:#0C2646; --fg-2:#33507A; --muted:#5E7898;
+    --ice:#5B8EC6; --accent:#2B7DD1; --accent-ink:#FFFFFF;
+    --accent-soft:rgba(43,125,209,.10); --accent-line:rgba(43,125,209,.34);
+    --silver:#8CA1BE; --warn:#C0693A; --warn-soft:rgba(192,105,58,.10);
+    --scrim:rgba(12,38,70,.35); --shadow:0 14px 34px rgba(20,70,130,.12);
+    --tab-bg:rgba(246,250,254,.95); --top-glow:#D6E8F9;
+    --cur-1:rgba(120,182,245,.38); --cur-2:rgba(178,222,255,.55); --cur-3:rgba(80,145,225,.20); --accent-hi:#56A3EE;
+  }
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#EEF5FC; --bg-2:#E3EEF9; --surface:#FFFFFF; --surface-2:#E7F1FB;
+  --line:#D3E2F2; --line-2:#BCD1EA;
+  --fg:#0C2646; --fg-2:#33507A; --muted:#5E7898;
+  --ice:#5B8EC6; --accent:#2B7DD1; --accent-ink:#FFFFFF;
+  --accent-soft:rgba(43,125,209,.10); --accent-line:rgba(43,125,209,.34);
+  --silver:#8CA1BE; --warn:#C0693A; --warn-soft:rgba(192,105,58,.10);
+  --scrim:rgba(12,38,70,.35); --shadow:0 14px 34px rgba(20,70,130,.12);
+  --tab-bg:rgba(246,250,254,.95); --top-glow:#D6E8F9;
+  --cur-1:rgba(120,182,245,.38); --cur-2:rgba(178,222,255,.55); --cur-3:rgba(80,145,225,.20); --accent-hi:#56A3EE;
+}
+/* Sleep goes one layer deeper: the open ocean at night */
+.night-env{
+  color-scheme:dark;
+  --bg:#04102A; --bg-2:#071735; --surface:#0A1E40; --surface-2:#0F2A51;
+  --line:#16335C; --line-2:#234670;
+  --fg:#EBF4FF; --fg-2:#B9CDE8; --muted:#7F99BD;
+  --ice:#C4DDF7; --accent:#8FCBFF; --accent-ink:#062244;
+  --accent-soft:rgba(143,203,255,.14); --accent-line:rgba(143,203,255,.42);
+  --silver:#D3DFEF; --warn:#F2B48C; --warn-soft:rgba(242,180,140,.15);
+  --scrim:rgba(2,8,22,.65); --shadow:0 18px 40px rgba(0,5,18,.55);
+  --tab-bg:rgba(5,17,40,.95); --top-glow:#0E2C5C;
+  --cur-1:rgba(44,96,190,.38); --cur-2:rgba(120,180,255,.14); --cur-3:rgba(20,60,140,.42); --accent-hi:#C2E3FF;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:15px;line-height:1.45;letter-spacing:-.005em;overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;transition:background .4s}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+svg{display:block}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.sm{width:18px;height:18px}
+.ic.xs{width:15px;height:15px}
+
+#app{position:relative;height:100%;max-width:440px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;transition:background .4s}
+@media (min-width:520px){#app{border-left:1px solid var(--line);border-right:1px solid var(--line)}}
+
+.view{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));padding-block:14px 32px;scrollbar-width:none}
+.view::-webkit-scrollbar{display:none}
+.view{position:relative;z-index:1;background:transparent}
+/* Ocean current: slow-moving light under the surface */
+#app::before,#onb::before,#session::before{content:"";position:absolute;inset:0 0 auto 0;height:520px;pointer-events:none;z-index:0;
+  background:radial-gradient(55% 60% at 12% 0%,var(--cur-1) 0%,transparent 70%),radial-gradient(50% 55% at 92% 6%,var(--cur-2) 0%,transparent 72%),radial-gradient(75% 55% at 55% 58%,var(--cur-3) 0%,transparent 76%);
+  background-size:150% 150%,150% 150%,160% 160%;background-repeat:no-repeat;
+  -webkit-mask-image:linear-gradient(180deg,#000 35%,transparent 100%);mask-image:linear-gradient(180deg,#000 35%,transparent 100%);
+  animation:current 26s ease-in-out infinite alternate;transition:opacity .4s}
+@keyframes current{0%{background-position:0% 0%,100% 0%,50% 100%}50%{background-position:35% 15%,70% 25%,30% 70%}100%{background-position:10% 30%,85% 10%,65% 55%}}
+#onb>*,#session>*{position:relative;z-index:1}
+.tabbar{position:relative;z-index:2}
+.stack{display:grid;gap:30px}
+.enter{animation:viewIn .32s cubic-bezier(.2,.7,.2,1)}
+@keyframes viewIn{from{opacity:.0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Type */
+.label{font-family:var(--f-ui);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.label.acc{color:var(--accent)}
+.h-view{font-family:var(--f-ui);font-weight:700;font-size:34px;line-height:1.1;letter-spacing:-.022em;margin:4px 0 0;text-wrap:balance}
+.h-sec{font-family:var(--f-ui);font-weight:700;font-size:21px;line-height:1.2;letter-spacing:-.015em;margin:0;text-wrap:balance}
+.meta{font-size:13px;color:var(--muted)}
+.body2{font-size:14px;color:var(--fg-2)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:600}
+.num{font-variant-numeric:lining-nums tabular-nums}
+p{margin:0}
+
+/* View header */
+.vh{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-top:6px}
+.vh-l{min-width:0}
+.greet{font-size:16px;font-weight:600;color:var(--fg-2);margin-top:2px;letter-spacing:-.01em}
+.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line-2);font-weight:600;font-size:14px;color:var(--fg);flex:none}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.link{color:var(--accent);font-size:14px;font-weight:500}
+
+/* Surfaces */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}
+.pad{padding:18px}
+.group{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.row{display:flex;align-items:center;gap:14px;padding:14px 16px;width:100%;text-align:left;min-height:56px}
+.row+.row{border-top:1px solid var(--line)}
+.row .grow{flex:1;min-width:0}
+.row-t{font-size:16px;font-weight:600;letter-spacing:-.01em;color:var(--fg)}
+.row-s{font-size:13px;color:var(--muted)}
+.chev{color:var(--muted)}
+.ico-badge{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);flex:none}
+.ico-badge.ice{background:color-mix(in srgb,var(--ice) 14%,transparent);color:var(--ice)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 22px;border-radius:var(--r-md);font-weight:600;font-size:17px;letter-spacing:-.01em;transition:transform .12s,opacity .2s,background .2s}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:linear-gradient(135deg,var(--accent-hi) 0%,var(--accent) 55%,color-mix(in srgb,var(--accent) 80%,#2B6FD0) 100%);color:var(--accent-ink);box-shadow:0 8px 24px -10px var(--accent),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn.sec{background:var(--surface-2);color:var(--fg);border:1px solid var(--line-2)}
+.btn.ghost{color:var(--fg-2);border:1px solid var(--line-2)}
+.btn.block{width:100%}
+.btn.sm{height:38px;padding:0 14px;font-size:14px;border-radius:12px}
+.btn[disabled]{opacity:.42;pointer-events:none}
+.chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:99px;font-size:12.5px;font-weight:500;border:1px solid var(--line-2);color:var(--fg-2);white-space:nowrap}
+.chip.acc{border-color:var(--accent-line);color:var(--accent);background:var(--accent-soft)}
+.chip.warn{border-color:color-mix(in srgb,var(--warn) 40%,transparent);color:var(--warn);background:var(--warn-soft)}
+.chip.ghost{border-style:dashed;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent);letter-spacing:.01em}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.mute{background:var(--surface-2);color:var(--muted)}
+
+/* Switch */
+.switch{width:50px;height:30px;border-radius:99px;background:var(--line-2);position:relative;flex:none;transition:background .25s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .25s cubic-bezier(.3,.7,.3,1)}
+.switch[aria-checked="true"]{background:linear-gradient(135deg,var(--accent-hi),var(--accent))}
+.switch[aria-checked="true"]::after{transform:translateX(20px)}
+
+/* Segmented */
+.seg{display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;height:34px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--muted);transition:background .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 4px rgba(0,0,0,.18)}
+
+/* Stepper */
+.stepper{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.stepper .sbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;color:var(--fg-2)}
+.stepper .sbtn:active{transform:scale(.94)}
+.stepper .sval{font-family:var(--f-display);font-size:40px;font-weight:700;letter-spacing:-.025em;font-variant-numeric:lining-nums tabular-nums}
+
+/* Hero score */
+.hero{display:grid;gap:10px;text-align:left;width:100%}
+.hero-top{display:flex;align-items:center;justify-content:space-between}
+.hero-num{display:flex;align-items:flex-end;gap:14px}
+.big{font-family:var(--f-display);font-weight:700;font-size:78px;line-height:.9;letter-spacing:-.04em;font-variant-numeric:lining-nums tabular-nums}
+.hero-side{display:grid;gap:3px;padding-bottom:8px}
+.hero .big,.commit .big{background:linear-gradient(180deg,var(--fg) 35%,var(--accent) 120%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.band-name{font-family:var(--f-display);font-weight:700;font-size:19px;line-height:1.15;letter-spacing:-.01em;color:var(--accent)}
+.delta{font-size:12.5px;color:var(--muted)}
+.delta.up{color:var(--accent)}
+.delta.down{color:var(--warn)}
+.rline{width:100%;height:auto;overflow:visible}
+.rline text{font-family:var(--f-ui);font-weight:600;font-size:9.5px;fill:var(--muted)}
+.rline .today-lab{fill:var(--fg)}
+.pulse{animation:pulse 2.4s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+@keyframes pulse{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:.05;transform:scale(1.9)}}
+.hero-hint{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+
+/* Today strip */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.strip button{padding:12px 4px;text-align:left;display:grid;gap:2px}
+.strip button+button{border-left:1px solid var(--line);padding-left:12px}
+.strip .v{font-family:var(--f-display);font-size:21px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.strip .v small{font-size:13px;color:var(--muted);font-weight:500}
+
+/* Up next */
+.next{position:relative;padding:20px;border-radius:var(--r-lg);background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 12%,var(--surface)) 0%,var(--surface) 60%);border:1px solid var(--accent-line);display:grid;gap:14px;overflow:hidden}
+.next::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.7}
+.ifthen{display:flex;align-items:center;flex-wrap:wrap;gap:7px;font-family:var(--f-ui);font-weight:600;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.ifthen b{color:var(--fg);font-weight:700}
+.ifthen .arrow{color:var(--accent)}
+.next h3{margin:0;font-family:var(--f-ui);font-weight:700;font-size:22px;line-height:1.2;letter-spacing:-.018em}
+.next-row{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
+
+/* Timetable */
+.tt{display:grid}
+.tt-item{display:grid;grid-template-columns:62px 14px 1fr;gap:0 12px;align-items:start;min-height:64px;width:100%;text-align:left}
+.tt-time{font-family:var(--f-mono);font-weight:600;font-size:12.5px;color:var(--fg-2);padding-top:2px;font-variant-numeric:tabular-nums}
+.tt-time span{display:block;color:var(--muted);font-size:11px}
+.tt-rail{position:relative;height:100%;display:flex;justify-content:center}
+.tt-rail::before{content:"";position:absolute;top:0;bottom:0;width:1px;background:var(--line-2)}
+.tt-item:first-child .tt-rail::before{top:7px}
+.tt-item:last-child .tt-rail::before{bottom:auto;height:7px}
+.tt-dot{position:relative;margin-top:4px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:1.5px solid var(--line-2)}
+.tt-item.past .tt-dot{background:var(--line-2)}
+.tt-item.now .tt-dot{border-color:var(--accent);background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.tt-body{padding-bottom:16px;min-width:0}
+.tt-title{font-weight:600;font-size:16px;letter-spacing:-.01em}
+.tt-item.past .tt-title{color:var(--fg-2)}
+.tt-sub{font-size:12.5px;color:var(--muted)}
+.tt-then{margin-top:7px}
+
+/* Banner */
+.banner{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--r-md);background:var(--accent-soft);border:1px solid var(--accent-line);text-align:left;width:100%}
+.banner.warn{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+.banner .grow{flex:1;min-width:0}
+.banner.install{background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 22%,var(--surface)),var(--surface));padding:12px 12px 12px 14px}
+.app-ic{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;flex:none;background:linear-gradient(180deg,#123A6B,#04102A);color:#BFE0FF;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.app-ic .ic{width:26px;height:26px;stroke-width:1.5}
+.inst-step{display:flex;gap:14px;align-items:flex-start;padding:14px 16px}
+.inst-step+.inst-step{border-top:1px solid var(--line)}
+.inst-n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px}
+
+/* Check-in */
+.checkin{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.checkin button{height:64px;border-radius:var(--r-md);border:1px solid var(--line-2);display:grid;place-items:center;gap:2px;font-size:13.5px;font-weight:500;padding:8px 0}
+.checkin button:active{background:var(--accent-soft);border-color:var(--accent-line)}
+
+/* Modules */
+.mod{display:flex;align-items:center;gap:14px;padding:16px;width:100%;text-align:left}
+.mod+.mod{border-top:1px solid var(--line)}
+.mod-ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--ice);flex:none}
+.mod-ic .ic{width:24px;height:24px}
+.feature{padding:22px;border-radius:var(--r-lg);background:var(--surface);border:1px solid var(--line);display:grid;gap:16px}
+.feature-vis{height:120px;display:grid;place-items:center}
+
+/* Progress bars */
+.bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 70%,#2B6FD0),var(--accent-hi));transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.bar.ice>i{background:var(--ice)}
+.bar.pend>i{background:repeating-linear-gradient(90deg,var(--accent) 0 4px,transparent 4px 7px)}
+.comp{display:grid;gap:7px}
+.comp-h{display:flex;justify-content:space-between;font-size:14px}
+.comp-h .mono{font-size:12.5px;color:var(--fg-2)}
+
+/* Sleep */
+.commit{display:grid;gap:6px}
+.commit .big{font-size:88px}
+.sleep-meta{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13.5px;color:var(--fg-2)}
+.sleep-meta b{color:var(--fg);font-weight:500}
+.lo-btn{height:58px;border-radius:18px;font-size:16.5px}
+.tl text{font-family:var(--f-ui);font-weight:600;font-size:9.5px;fill:var(--muted)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:10px 6px;justify-items:center}
+.cal .wd{font-family:var(--f-ui);font-weight:600;font-size:11px;color:var(--muted)}
+.cd{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-variant-numeric:tabular-nums;color:var(--muted);border:1px solid var(--line)}
+.cd.kept{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.cd.grace{border:1.5px solid var(--accent);color:var(--accent)}
+.cd.late{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 40%,transparent);color:var(--warn)}
+.cd.today{border-style:dashed;border-color:var(--fg-2);color:var(--fg)}
+.cd.future,.cd.none{opacity:.45}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.wd-step{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;width:100%;text-align:left}
+.wd-step+.wd-step{border-top:1px solid var(--line)}
+.tick{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line-2);display:grid;place-items:center;flex:none;margin-top:1px;transition:all .2s}
+.tick .ic{width:14px;height:14px;stroke-width:2.2;opacity:0}
+.wd-step[aria-checked="true"] .tick{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.wd-step[aria-checked="true"] .tick .ic{opacity:1}
+.wd-step[aria-checked="true"] .row-t{color:var(--fg-2);text-decoration:line-through;text-decoration-color:var(--line-2)}
+
+/* Charts */
+.chart text{font-family:var(--f-ui);font-weight:600;font-size:9.5px;fill:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.kpi{padding:2px 12px 2px 0;display:grid;gap:2px}
+.kpi+.kpi{border-left:1px solid var(--line);padding-left:12px}
+.kpi .v{font-family:var(--f-display);font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:lining-nums tabular-nums}
+.kpi .v small{font-family:var(--f-ui);font-size:13px;color:var(--muted)}
+
+/* Badges */
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 8px}
+.badge{display:grid;justify-items:center;gap:7px;text-align:center}
+.medal{width:62px;height:62px;position:relative;display:grid;place-items:center}
+.medal svg.ring{position:absolute;inset:0;width:100%;height:100%}
+.medal .ic{width:24px;height:24px;color:var(--muted);position:relative}
+.badge.got .medal .ic{color:var(--accent)}
+.badge.got .medal{filter:drop-shadow(0 0 10px var(--accent-soft))}
+.badge-n{font-size:11.5px;line-height:1.2;color:var(--muted);font-weight:500}
+.badge.got .badge-n{color:var(--fg)}
+
+/* Rewards */
+.vouch{display:flex;align-items:center;gap:14px;padding:14px 16px}
+.vouch+.vouch{border-top:1px solid var(--line)}
+.vmark{width:44px;height:44px;border-radius:12px;border:1px dashed var(--line-2);display:grid;place-items:center;color:var(--ice);flex:none}
+
+/* Circle */
+.pod-row{display:flex;align-items:center;gap:12px;padding:12px 16px;width:100%;text-align:left}
+.pod-row+.pod-row{border-top:1px solid var(--line)}
+.dots7{display:flex;gap:4px}
+.dots7 i{width:7px;height:7px;border-radius:50%;background:var(--line-2)}
+.dots7 i.on{background:var(--accent)}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;border:1px solid var(--line-2);background:var(--surface-2);flex:none}
+.av.you{border-color:var(--accent-line);color:var(--accent)}
+.avs{display:flex}
+.avs .av{width:30px;height:30px;font-size:11.5px;margin-left:-8px;border:2px solid var(--surface)}
+.avs .av:first-child{margin-left:0}
+.sim{font-family:var(--f-ui);font-weight:600;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line-2);padding:2px 6px;border-radius:5px;white-space:nowrap}
+
+/* Tab bar */
+.tabbar{flex:none;display:grid;grid-template-columns:repeat(5,1fr);background:var(--tab-bg);border-top:1px solid var(--line);padding-top:6px;padding-bottom:max(8px,env(safe-area-inset-bottom,0px));padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:background .4s}
+.tab{display:grid;justify-items:center;gap:3px;padding:6px 0 4px;color:var(--muted);font-size:10.5px;font-weight:500;letter-spacing:.02em;position:relative}
+.tab .ic{width:24px;height:24px;transition:transform .2s}
+.tab[aria-current="page"]{color:var(--fg)}
+.tab[aria-current="page"] .ic{color:var(--accent)}
+.tab:active .ic{transform:scale(.88)}
+
+/* Sheet */
+#sheet-layer{position:absolute;inset:0;z-index:40}
+.scrim{position:absolute;inset:0;background:var(--scrim);opacity:0;transition:opacity .28s}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:92%;overflow-y:auto;overscroll-behavior:contain;background:var(--bg-2);border-top:1px solid var(--line-2);border-radius:26px 26px 0 0;padding:8px max(20px,env(safe-area-inset-right,0px)) max(26px,env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));transform:translateY(100%);transition:transform .34s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow);display:grid;gap:22px;align-content:start;grid-auto-rows:max-content;scrollbar-width:none}
+#sheet-layer.open .scrim{opacity:1}
+#sheet-layer.open .sheet{transform:none}
+.grab{width:38px;height:5px;border-radius:99px;background:var(--line-2);margin:4px auto 0}
+.sheet-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.xbtn{width:34px;height:34px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;color:var(--fg-2);flex:none}
+
+/* Fields */
+.field{display:grid;gap:6px}
+.field label{font-size:13px;color:var(--fg-2)}
+.input{height:48px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);padding:0 14px;font-size:16px;width:100%;min-width:0}
+.input:focus{outline:none;border-color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{font-size:13px;color:var(--warn);display:flex;gap:6px;align-items:center}
+
+/* Session */
+#session{position:absolute;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;padding:max(14px,env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) max(22px,env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));animation:viewIn .3s ease}
+.ses-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ses-main{flex:1;display:grid;place-items:center;align-content:center;gap:22px;text-align:center;min-height:0}
+.ses-stage{position:relative;width:min(72vw,280px);aspect-ratio:1;max-width:100%}
+.ses-stage>svg{position:absolute;inset:0;width:100%;height:100%}
+.ses-cue{font-family:var(--f-ui);font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.1;min-height:34px}
+.ses-sub{font-size:14.5px;color:var(--fg-2);max-width:300px;margin:0 auto;min-height:42px}
+.ses-time{font-family:var(--f-display);font-size:17px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.ses-ctrl{display:grid;gap:10px}
+.stepdots{display:flex;gap:5px;justify-content:center}
+.stepdots i{width:18px;height:3px;border-radius:2px;background:var(--line-2);transition:background .3s}
+.stepdots i.on{background:var(--accent)}
+.stepdots i.done{background:var(--fg-2)}
+.breath-core{transform-origin:50% 50%;transform-box:view-box}
+.done-check path{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .7s .15s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.blink{transform-origin:50% 50%;transform-box:fill-box;animation:blink 3s ease-in-out infinite}
+@keyframes blink{0%,40%,60%,100%{transform:scaleY(1)}50%{transform:scaleY(.06)}}
+.far-ping{transform-origin:center;transform-box:fill-box;animation:ping 2.8s ease-out infinite}
+@keyframes ping{0%{transform:scale(.4);opacity:.8}100%{transform:scale(2.4);opacity:0}}
+.head{transform-origin:100px 100px;transform-box:view-box;transition:transform 1.2s cubic-bezier(.4,0,.2,1)}
+.nose{transition:transform 1.2s cubic-bezier(.4,0,.2,1)}
+.shoulders{transform-origin:100px 150px;transform-box:view-box;transition:transform 1.2s}
+.pose-roll .shoulders{animation:roll 3s ease-in-out infinite}
+@keyframes roll{0%,100%{transform:translateY(0)}35%{transform:translateY(-9px)}65%{transform:translateY(3px)}}
+.pose-tl .head{transform:rotate(-20deg)}
+.pose-tr .head{transform:rotate(20deg)}
+.pose-tuck .head{animation:tuck 3s ease-in-out infinite}
+@keyframes tuck{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(4px) scale(.96)}}
+.pose-turn .nose{animation:turn 6s ease-in-out infinite}
+@keyframes turn{0%,100%{transform:translateX(0)}25%{transform:translateX(-11px)}75%{transform:translateX(11px)}}
+.pose-open .shoulders{transform:scaleX(1.1) translateY(-3px)}
+.confirm{display:grid;gap:10px;padding:16px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line-2);text-align:left}
+
+/* Lights out overlay */
+.lo{position:absolute;inset:0;z-index:60;background:#020A1C;color:#D3DFEF;display:grid;place-items:center;text-align:center;padding:24px;animation:fadeDark 1.4s ease}
+@keyframes fadeDark{from{opacity:0}to{opacity:1}}
+.lo .t{font-family:var(--f-display);font-size:68px;font-weight:700;letter-spacing:-.04em;color:#EBF4FF;line-height:1}
+.lo p{color:#7F99BD}
+
+/* Onboarding */
+#onb{position:absolute;inset:0;z-index:70;background:var(--bg);display:flex;flex-direction:column;padding:max(14px,env(safe-area-inset-top,0px)) max(22px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(22px,env(safe-area-inset-left,0px))}
+.onb-top{display:flex;align-items:center;gap:12px;height:40px}
+.onb-prog{flex:1;display:flex;gap:5px}
+.onb-prog i{flex:1;height:3px;border-radius:2px;background:var(--line-2);transition:background .3s}
+.onb-prog i.on{background:var(--accent)}
+.onb-body{flex:1;min-height:0;overflow-y:auto;display:grid;align-content:start;grid-auto-rows:max-content;gap:24px;padding-top:26px;scrollbar-width:none}
+.onb-foot{padding-top:14px;display:grid;gap:10px}
+.onb-h{font-family:var(--f-ui);font-size:34px;font-weight:700;line-height:1.1;letter-spacing:-.025em;margin:0;text-wrap:balance}
+.choice{display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--r-md);border:1px solid var(--line-2);width:100%;text-align:left;background:var(--surface);transition:border-color .2s,background .2s}
+.choice[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.choice .grow{flex:1;min-width:0}
+.radio{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line-2);flex:none;display:grid;place-items:center}
+.choice[aria-pressed="true"] .radio{border-color:var(--accent)}
+.choice[aria-pressed="true"] .radio::after{content:"";width:11px;height:11px;border-radius:50%;background:var(--accent)}
+.swatch{width:46px;height:62px;border-radius:9px;flex:none;border:1px solid var(--line-2);padding:6px;display:grid;gap:4px;align-content:start}
+.swatch i{display:block;height:5px;border-radius:2px}
+.wordmark{display:flex;align-items:center;gap:12px}
+.wordmark .ic{width:34px;height:34px;color:var(--accent);stroke-width:1.4}
+.wordmark span{font-family:var(--f-ui);font-weight:800;letter-spacing:.3em;font-size:20px}
+.loader{display:grid;place-items:center;gap:20px;text-align:center;padding-top:22vh}
+.loader path{stroke-dasharray:400;stroke-dashoffset:400;animation:drawl 1.6s ease forwards}
+@keyframes drawl{to{stroke-dashoffset:0}}
+
+/* Toast */
+#toast{position:absolute;left:50%;top:max(14px,env(safe-area-inset-top,0px));transform:translate(-50%,-140%);z-index:90;background:var(--surface-2);border:1px solid var(--line-2);color:var(--fg);padding:11px 16px;border-radius:14px;font-size:14px;box-shadow:var(--shadow);transition:transform .35s cubic-bezier(.2,.8,.2,1);max-width:calc(100% - 32px);display:flex;gap:10px;align-items:center}
+#toast.show{transform:translate(-50%,0)}
+#toast .ic{color:var(--accent)}
+
+.note{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--muted);line-height:1.45}
+.note .ic{margin-top:1px}
+.hr{height:1px;background:var(--line)}
+.center{text-align:center}
+.gap8{display:grid;gap:8px}.gap12{display:grid;gap:12px}.gap16{display:grid;gap:16px}
+.flex{display:flex;align-items:center;gap:10px}
+.between{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.wrap{flex-wrap:wrap}
+.acc{color:var(--accent)}
+.warnc{color:var(--warn)}
+.muted{color:var(--muted)}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <main id="view" class="view" aria-live="polite"></main>
+  <nav class="tabbar" id="tabbar" aria-label="Main"></nav>
+  <div id="sheet-layer" hidden></div>
+  <div id="session" hidden></div>
+  <div id="onb" hidden></div>
+  <div id="lo-layer"></div>
+  <div id="toast" role="status"></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ============ Icons ============ */
+const P = {
+  mark:'<circle cx="12" cy="12" r="9.5"/><path d="M9.6 8.4v7.2M14.4 8.4v7.2"/>',
+  today:'<path d="M3 17.5h18M6.5 17.5a5.5 5.5 0 0 1 11 0M12 5v2.2M5.3 9.3l1.5 1.5M18.7 9.3l-1.5 1.5"/>',
+  reset:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/>',
+  sleep:'<path d="M19.5 14.6A8 8 0 0 1 9.4 4.5a8 8 0 1 0 10.1 10.1z"/>',
+  progress:'<path d="M3 15c2.6 0 2.8-6.5 5.6-6.5S11.5 18 14.4 18s3-6 6.6-6"/>',
+  circle:'<circle cx="9" cy="12" r="5.6"/><circle cx="15" cy="12" r="5.6"/>',
+  breath:'<path d="M4 9c3 0 3-3 6-3s3 3 6 3 3-3 4-3M4 14c3 0 3-3 6-3s3 3 6 3 3-3 4-3M4 19c3 0 3-3 6-3s3 3 6 3 3-3 4-3"/>',
+  eyes:'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+  neck:'<circle cx="12" cy="6.5" r="3"/><path d="M12 9.5v3M4 20c1.2-4.6 4.4-7.5 8-7.5s6.8 2.9 8 7.5"/>',
+  chev:'<path d="M9.5 6l6 6-6 6"/>',
+  close:'<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+  plus:'<path d="M12 5.5v13M5.5 12h13"/>',
+  minus:'<path d="M5.5 12h13"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  bars:'<path d="M6 5v14M10 5v14M18 5v14M20.5 5v14"/>',
+  diamond:'<path d="M12 3.5l7 8.5-7 8.5-7-8.5z"/><path d="M5 12h14"/>',
+  shield:'<path d="M12 3.5l7.5 3v5.2c0 4.4-3.1 7.8-7.5 8.8-4.4-1-7.5-4.4-7.5-8.8V6.5z"/><path d="M9 12l2.2 2.2L15.5 10"/>',
+  bell:'<path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 1.5H5z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+  gear:'<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>',
+  book:'<path d="M4 5.5A2 2 0 0 1 6 3.5h13v14H6a2 2 0 0 0-2 2z"/><path d="M4 19.5a2 2 0 0 0 2 2h13v-4"/>',
+  play:'<path d="M8 5.5v13l10.5-6.5z"/>',
+  pause:'<path d="M9 5.5v13M15 5.5v13"/>',
+  share:'<path d="M12 15V3.5M7.5 8L12 3.5 16.5 8"/><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"/>',
+  copy:'<rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/>',
+  trash:'<path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/>',
+  lock:'<rect x="5.5" y="10.5" width="13" height="10" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.2"/>',
+  ticket:'<path d="M3.5 8.5V6.5h17v2a2.5 2.5 0 0 0 0 5v2h-17v-2a2.5 2.5 0 0 0 0-5z"/><path d="M14 6.5v11" stroke-dasharray="2 2"/>',
+  campus:'<path d="M3 9.5L12 4l9 5.5M5.5 10.5v7M10 10.5v7M14 10.5v7M18.5 10.5v7M3.5 20h17"/>',
+  heart:'<path d="M12 19.5s-7.5-4.4-7.5-10A4 4 0 0 1 12 7a4 4 0 0 1 7.5 2.5c0 5.6-7.5 10-7.5 10z"/>',
+  sprint:'<circle cx="12" cy="13" r="7.5"/><path d="M12 9v4l2.5 2.5M10 3h4"/>',
+  moon:'<path d="M19.5 14.6A8 8 0 0 1 9.4 4.5a8 8 0 1 0 10.1 10.1z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>',
+  auto:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor" stroke="none"/>',
+  chart:'<path d="M4 19.5h16M7 16V11M12 16V6.5M17 16v-7"/>',
+  arrowr:'<path d="M5 12h14M13.5 6.5L19 12l-5.5 5.5"/>',
+  edit:'<path d="M14.5 5.5l4 4L9 19H5v-4z"/>',
+  // badge glyphs
+  g_rest:'<path d="M10 4.5l4 4.3-3.2 3.2 3.4 3.8c-2.3-.9-4.4-.2-3.6 2.2.3.9 1 1.5 1.6 1.8"/>',
+  g_triad:'<circle cx="12" cy="7.5" r="3"/><circle cx="7" cy="16" r="3"/><circle cx="17" cy="16" r="3"/>',
+  g_bars:'<path d="M5 6v12M9 6v12M13 6v12M17.5 6v12M20 6v12"/>',
+  g_repeat:'<path d="M5 10a7 7 0 0 1 12.5-3.5M19 14a7 7 0 0 1-12.5 3.5"/><path d="M17.8 3.5v3.3h-3.3M6.2 20.5v-3.3h3.3"/>',
+  g_wave:'<path d="M3 12c2.2 0 2.2-5 4.5-5s2.3 10 4.5 10 2.3-10 4.5-10S18.8 12 21 12"/>',
+  g_fermata:'<path d="M4.5 16a7.5 7.5 0 0 1 15 0"/><circle cx="12" cy="15" r="1.4" fill="currentColor"/>',
+  g_sun:'<path d="M3.5 17h17M7.5 17a4.5 4.5 0 0 1 9 0M12 7.5V9.5M6.4 10.4l1.3 1.3M17.6 10.4l-1.3 1.3"/>',
+  g_pod:'<circle cx="8" cy="13" r="4"/><circle cx="16" cy="13" r="4"/><circle cx="12" cy="8" r="4"/>'
+};
+const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||''}</svg>`;
+
+/* ============ Utils ============ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad2=n=>String(n).padStart(2,'0');
+const toMin=t=>{const a=String(t).split(':').map(Number);return a[0]*60+a[1]};
+const fromMin=m=>{m=((Math.round(m)%1440)+1440)%1440;return pad2(Math.floor(m/60))+':'+pad2(m%60)};
+const ymd=d=>d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+const parseKey=k=>{const a=k.split('-').map(Number);return new Date(a[0],a[1]-1,a[2],12)};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const relToBed=(t,bed)=>{let d=toMin(t)-toMin(bed);if(d>720)d-=1440;if(d<-720)d+=1440;return d};
+const fmtDur=m=>{m=Math.max(0,Math.round(m));const h=Math.floor(m/60),mm=m%60;return h?(h+'h'+(mm?' '+mm+'m':'')):(mm+'m')};
+const WD=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const WDL=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const wdi=d=>(d.getDay()+6)%7;
+const TYPES={breath:{name:'Breath',long:'Guided breathing',desc:'Slow, paced breathing to settle a busy mind.',icon:'breath'},
+             eyes:{name:'Eyes',long:'Eye relaxation',desc:'Rest eyes that stared at screens all class.',icon:'eyes'},
+             neck:{name:'Neck',long:'Neck & shoulders',desc:'Release the laptop hunch, gently.',icon:'neck'}};
+
+/* ============ State ============ */
+const KEY='pausa.v1';
+let S;
+function load(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+let cid=0;
+function sampleTimetable(){
+  const c=(title,code,start,end,room,then)=>({id:'c'+(++cid)+'_'+Math.random().toString(36).slice(2,6),title,code,start,end,room,then});
+  return [
+    [c('Principles of Marketing','MKT201','09:00','10:30','A3-402','eyes'),c('Business Statistics','STA210','11:00','12:30','B2-210','neck'),c('IGE014 Seminar','IGE014','13:30','15:00','A5-301','breath')],
+    [c('Consumer Behavior','MKT230','10:00','12:00','A3-405','neck'),c('Digital Media Lab','DMK240','13:00','16:00','Lab C1','eyes')],
+    [c('Financial Accounting','ACC101','09:00','10:30','B1-104','eyes'),c('IGE014 Seminar','IGE014','13:30','15:00','A5-301','breath')],
+    [c('Business Statistics','STA210','09:00','10:30','B2-210','neck'),c('Consumer Behavior','MKT230','13:00','15:00','A3-405','breath')],
+    [c('Digital Media Lab','DMK240','10:00','12:00','Lab C1','eyes'),c('Academic English','ENG112','13:00','14:30','A2-201','neck')],
+    [],[]
+  ];
+}
+function defaults(){
+  return {v:1,onboarded:false,name:'',theme:'night',bedtime:'23:00',wake:'06:30',
+    meTime:true,meStart:'21:45',windReminder:true,prefs:{breath:true,eyes:true,neck:true},resetTarget:1,
+    examMode:false,examResets:0,points:0,history:{},timetable:sampleTimetable(),useSample:true,withHistory:false,
+    dayOffset:0,stake:null,vouchers:[],challenges:{},claimed:{},podJoined:false,sprint:null,sample:false,
+    peakScore:0,tab:'today',nudges:0};
+}
+S=Object.assign(defaults(),load()||{});
+
+const now=()=>{const d=new Date();d.setDate(d.getDate()+(S.dayOffset||0));return d};
+const todayKey=()=>ymd(now());
+const yKey=()=>ymd(addDays(now(),-1));
+const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
+const T=()=>{const k=todayKey();return S.history[k]||(S.history[k]={resets:0,types:[]})};
+const rec=k=>S.history[k]||null;
+const windStart=()=>fromMin(toMin(S.bedtime)-30);
+const sleepWin=()=>{let d=toMin(S.wake)-toMin(S.bedtime);if(d<=0)d+=1440;return d};
+const todayClasses=()=>(S.timetable[wdi(now())]||[]).slice().sort((a,b)=>toMin(a.start)-toMin(b.start));
+function firstKey(){const ks=Object.keys(S.history).sort();return ks[0]||null}
+
+function seedHistory(){
+  const offs=[35,20,10,-5,15,100,25,5,-10,0,15,-5,10];
+  const res=[1,0,1,2,1,0,1,1,2,1,0,2,1];
+  const wd=[0,1,1,1,1,0,1,1,1,1,0,1,1];
+  const ty=['breath','eyes','neck'];
+  const t=now();
+  for(let i=0;i<13;i++){
+    const k=ymd(addDays(t,i-13));
+    const rt=[];for(let j=0;j<res[i];j++)rt.push(ty[(i+j)%3]);
+    const o=offs[i];
+    S.history[k]={lightsOut:fromMin(toMin(S.bedtime)+o),bed:S.bedtime,resets:res[i],types:rt,windDown:!!wd[i],
+      wake:Math.abs(o)<=20?(i%3?'fresh':'okay'):(o>60?'foggy':'okay'),sample:true};
+  }
+  S.points=340;S.sample=true;
+}
+
+/* ============ Pausa Score ============ */
+function isExam(k){const r=rec(k);return k===todayKey()?S.examMode:!!(r&&r.exam)}
+const dayWin=k=>isExam(k)?45:20;
+const dayTarget=k=>isExam(k)?2:(S.resetTarget||1);
+function resetPts(n,t){if(t>=2)return n>=2?30:n>=1?15:0;return n>=2?30:n>=1?20:0}
+function rhythmPts(k){
+  const r=rec(k);if(!r||!r.lightsOut)return null;
+  const d=Math.abs(relToBed(r.lightsOut,r.bed||S.bedtime)),w=dayWin(k);
+  return d<=w?40:Math.max(0,Math.round(40*(1-(d-w)/70)));
+}
+function steadyPts(k){
+  const r=rec(k);if(!r||!r.lightsOut)return null;
+  const vals=[];
+  for(let i=0;i<7;i++){const rr=rec(ymd(addDays(parseKey(k),-i)));if(rr&&rr.lightsOut&&!rr.grace)vals.push(Math.max(-60,Math.min(60,relToBed(rr.lightsOut,rr.bed||S.bedtime))))}
+  let p;
+  if(vals.length<3)p=8;else{const m=vals.reduce((a,b)=>a+b,0)/vals.length;const sd=Math.sqrt(vals.reduce((a,b)=>a+(b-m)*(b-m),0)/vals.length);p=sd<=15?15:Math.max(0,Math.round(15*(1-(sd-15)/45)))}
+  if(isComeback(k))p=Math.min(15,p+5);
+  return p;
+}
+function isComeback(k){
+  const pk=ymd(addDays(parseKey(k),-1)),pr=rec(pk),f=firstKey();
+  if(!f||pk<f)return false;
+  if(pr&&pr.grace)return false;
+  const prevMiss=!pr||!pr.lightsOut||(rhythmPts(pk)||0)===0;
+  const rp=rhythmPts(k);
+  return prevMiss&&rp!==null&&rp>=20;
+}
+function avgComps(k){
+  let n=0,a={rhythm:0,steady:0,wind:0};
+  for(let i=1;i<=6;i++){const kk=ymd(addDays(parseKey(k),-i));const r=rec(kk);if(!r||r.grace)continue;const c=dayComp(kk);a.rhythm+=c.rhythm;a.steady+=c.steady;a.wind+=c.wind;n++}
+  if(!n)return{rhythm:24,steady:8,wind:8};
+  return{rhythm:Math.round(a.rhythm/n),steady:Math.round(a.steady/n),wind:Math.round(a.wind/n)};
+}
+function dayComp(k){
+  const r=rec(k),isT=k===todayKey();
+  const o={k,grace:!!(r&&r.grace),pending:[]};
+  o.reset=resetPts(r?r.resets||0:0,dayTarget(k));
+  let rh=rhythmPts(k),st=steadyPts(k);
+  let wd=r&&r.windDown?15:((isT&&!(r&&r.lightsOut))?null:0);
+  if(rh===null){if(isT)o.pending.push('rhythm');else rh=0}
+  if(st===null){if(isT)o.pending.push('steady');else st=0}
+  if(wd===null)o.pending.push('wind');
+  if(o.pending.length){const a=avgComps(k);if(rh===null)rh=a.rhythm;if(st===null)st=a.steady;if(wd===null)wd=a.wind}
+  o.rhythm=rh;o.steady=st;o.wind=wd;o.total=o.reset+rh+st+wd;
+  return o;
+}
+function scoreAt(endK){
+  const f=firstKey();if(!f)return null;
+  const vals=[];let done=0;const tk=todayKey();
+  for(let i=6;i>=0;i--){const k=ymd(addDays(parseKey(endK),-i));if(k<f||k>tk)continue;const c=dayComp(k);if(k!==tk)done++;if(c.grace)continue;vals.push(c.total)}
+  if(done<3||!vals.length)return null;
+  return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+}
+function calibration(){const f=firstKey();if(!f)return 0;let n=0;for(let i=1;i<=7;i++){const k=ymd(addDays(now(),-i));if(k>=f)n++}return Math.min(3,n)}
+function band(s){
+  if(s==null)return{key:'cal',name:'Calibrating',line:'Learning your rhythm. Your score appears after 3 nights.'};
+  if(s>=80)return{key:'rhythm',name:'In rhythm',line:'Rest is part of your routine now.'};
+  if(s>=60)return{key:'tempo',name:'In tempo',line:'A steady rhythm with the odd miss.'};
+  if(s>=40)return{key:'warm',name:'Warming up',line:'Habits are forming. Keep showing up.'};
+  return{key:'off',name:'Offbeat',line:'Off the beat for now. One reset starts the way back.'};
+}
+function kept(k){const r=rec(k);if(!r)return false;if(r.grace)return true;const p=rhythmPts(k);return p!==null&&p>=20}
+function streak(){let n=0;const t=now();let d=kept(todayKey())?0:-1;for(;n<500;d--){if(kept(ymd(addDays(t,d))))n++;else break}return n}
+function bestStreak(){const f=firstKey();if(!f)return 0;let best=0,cur=0;for(let d=parseKey(f);ymd(d)<=todayKey();d=addDays(d,1)){if(kept(ymd(d))){cur++;best=Math.max(best,cur)}else cur=0}return best}
+function graceAvailable(){for(let i=0;i<7;i++){const r=rec(ymd(addDays(now(),-i)));if(r&&r.grace)return false}return true}
+function yesterdayMissed(){const k=yKey(),f=firstKey();if(!f||k<f)return false;const r=rec(k);if(r&&r.grace)return false;return !kept(k)}
+
+/* ============ Settle (stake results for past nights) ============ */
+function settle(){
+  if(S.stake&&S.stake.status==='active'&&S.stake.night<todayKey()){
+    const r=rec(S.stake.night);
+    if(!r||!r.lightsOut){const loss=Math.round(S.stake.amount/2);S.points=Math.max(0,S.points-loss);S.stake.status='lost';toastLater(`Missed the stake: −${loss} points. Grace Night can still protect your streak.`)}
+  }
+}
+let pendingToast=null;const toastLater=m=>{pendingToast=m};
+
+/* ============ Toast ============ */
+let toastT;
+function toast(msg,icon='check'){const t=$('#toast');t.innerHTML=ic(icon,'sm')+'<span>'+esc(msg)+'</span>';t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800)}
+
+/* ============ Theme ============ */
+function applyTheme(){
+  const r=document.documentElement;
+  if(S.theme==='night')r.setAttribute('data-theme','dark');
+  else if(S.theme==='day')r.setAttribute('data-theme','light');
+  else r.removeAttribute('data-theme');
+  const dark=S.theme==='night'||(S.theme==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',dark?'#071A33':'#EEF5FC');
+}
+
+/* ============ Charts ============ */
+let gid=0;
+function smooth(p){if(p.length<2)return'';let d=`M${p[0][0].toFixed(1)},${p[0][1].toFixed(1)}`;for(let i=0;i<p.length-1;i++){const p0=p[i-1]||p[i],p1=p[i],p2=p[i+1],p3=p[i+2]||p2;d+=` C${(p1[0]+(p2[0]-p0[0])/6).toFixed(1)},${(p1[1]+(p2[1]-p0[1])/6).toFixed(1)} ${(p2[0]-(p3[0]-p1[0])/6).toFixed(1)},${(p2[1]-(p3[1]-p1[1])/6).toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`}return d}
+function rhythmLine(endK,h=74){
+  const W=320,H=h,top=8,bot=20,f=firstKey(),tk=todayKey();const id='rl'+(++gid);
+  const xs=i=>10+i*(W-20)/6,ys=v=>top+(1-v/100)*(H-top-bot);
+  const pts=[],labs=[];
+  for(let i=6;i>=0;i--){const d=addDays(parseKey(endK),-i),k=ymd(d),idx=6-i;
+    labs.push(`<text x="${xs(idx)}" y="${H-4}" text-anchor="middle" class="${k===tk?'today-lab':''}">${'MTWTFSS'[wdi(d)]}</text>`);
+    if(!f||k<f)continue;const c=dayComp(k);let v=c.total;if(c.grace){const a=scoreAt(k);v=a==null?50:a}
+    pts.push({x:xs(idx),y:ys(v),grace:c.grace,today:k===tk,pend:c.pending.length>0});}
+  const P2=pts.map(p=>[p.x,p.y]);const path=smooth(P2);
+  const area=P2.length>1?path+` L${P2[P2.length-1][0]},${H-bot} L${P2[0][0]},${H-bot} Z`:'';
+  const grid=[40,60,80].map(v=>`<line x1="0" x2="${W}" y1="${ys(v)}" y2="${ys(v)}" stroke="var(--line)" stroke-width="1" stroke-dasharray="2 4"/>`).join('');
+  const marks=pts.map(p=>p.today?`<circle cx="${p.x}" cy="${p.y}" r="9" fill="var(--accent)" class="pulse"/><circle cx="${p.x}" cy="${p.y}" r="4.5" fill="var(--accent)"/><circle cx="${p.x}" cy="${p.y}" r="2" fill="var(--bg)"/>`
+    :p.grace?`<circle cx="${p.x}" cy="${p.y}" r="3.6" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"/>`
+    :`<circle cx="${p.x}" cy="${p.y}" r="2.6" fill="var(--fg-2)"/>`).join('');
+  return `<svg class="rline" viewBox="0 0 ${W} ${H}" role="img" aria-label="Rhythm line, daily scores for the last 7 days"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".22"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>${grid}${area?`<path d="${area}" fill="url(#${id})"/>`:''}${path?`<linearGradient id="${id}s" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="var(--ice)" stop-opacity=".55"/><stop offset="1" stop-color="var(--accent)"/></linearGradient><path d="${path}" fill="none" stroke="url(#${id}s)" stroke-width="2.4" stroke-linecap="round"/>`:''}${marks}${labs.join('')}</svg>`;
+}
+
+/* ============ Render core ============ */
+const TABS=[['today','Today','today'],['reset','Reset','reset'],['sleep','Sleep','sleep'],['progress','Progress','progress'],['circle','Circle','circle']];
+function renderTabs(){$('#tabbar').innerHTML=TABS.map(t=>`<button class="tab" data-act="tab" data-arg="${t[0]}" ${S.tab===t[0]?'aria-current="page"':''}>${ic(t[2])}<span>${t[1]}</span></button>`).join('')}
+let lastTab=null;
+function render(keepScroll){
+  settle();
+  const v=$('#view');const st=keepScroll?v.scrollTop:0;
+  const night=S.tab==='sleep';
+  document.body.classList.toggle('night-env',night);
+  v.classList.toggle('night-glow',night);
+  const fn={today:vToday,reset:vReset,sleep:vSleep,progress:vProgress,circle:vCircle}[S.tab]||vToday;
+  v.innerHTML=`<div class="stack">${fn()}</div>`;
+  if(lastTab!==S.tab){v.firstElementChild.classList.add('enter');lastTab=S.tab}
+  v.scrollTop=st;
+  renderTabs();
+  const sc=scoreAt(todayKey());if(sc!=null&&sc>(S.peakScore||0))S.peakScore=sc;
+  countUp();
+  save();
+  if(pendingToast){toast(pendingToast,'info');pendingToast=null}
+}
+let shownScore=null;
+function countUp(){
+  const el=document.querySelector('[data-count]');if(!el)return;
+  const to=+el.dataset.count,from=shownScore==null?to:shownScore;shownScore=to;
+  if(from===to||matchMedia('(prefers-reduced-motion: reduce)').matches){el.textContent=to;return}
+  const t0=performance.now(),dur=700;
+  const step=t=>{const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);el.textContent=Math.round(from+(to-from)*e);if(p<1)requestAnimationFrame(step)};
+  requestAnimationFrame(step);
+}
+function go(tab){if(S.tab===tab){$('#view').scrollTo({top:0,behavior:'smooth'});return}S.tab=tab;render()}
+
+/* ============ TODAY ============ */
+function greeting(){const h=new Date().getHours();return h<5?'Still up':h<12?'Good morning':h<17?'Good afternoon':h<21?'Good evening':'Good night'}
+function nextReset(){
+  const cls=todayClasses(),m=nowMin(),r=T(),done=r.doneTriggers||[];
+  if(S.dayOffset===0){
+    for(const c of cls){if(c.then&&toMin(c.end)<=m&&m-toMin(c.end)<=120&&!done.includes(c.id))return{kind:'now',cls:c,type:c.then}}
+    const inClass=cls.find(c=>toMin(c.start)<=m&&m<toMin(c.end));
+    const up=cls.find(c=>c.then&&toMin(c.end)>m&&!done.includes(c.id));
+    if(up)return{kind:'later',cls:up,type:up.then,inClass};
+  }else{
+    const up=cls.find(c=>c.then&&!done.includes(c.id));
+    if(up)return{kind:'later',cls:up,type:up.then};
+  }
+  return{kind:'free',type:suggestType()};
+}
+function suggestType(){
+  const on=Object.keys(TYPES).filter(t=>S.prefs[t]);const list=on.length?on:Object.keys(TYPES);
+  const ty=T().types||[];return list.slice().sort((a,b)=>ty.filter(x=>x===a).length-ty.filter(x=>x===b).length)[0];
+}
+function vToday(){
+  const t=now(),r=T(),tk=todayKey();
+  const sc=scoreAt(tk),ys=scoreAt(yKey()),b=band(sc);
+  const dlt=sc!=null&&ys!=null?sc-ys:null;
+  const stk=streak(),tgt=dayTarget(tk),res=r.resets||0;
+  const nr=nextReset();
+  const cal=calibration();
+  let h=`<header class="vh"><div class="vh-l"><div class="label">${WDL[wdi(t)]} · ${t.getDate()} ${MON[t.getMonth()]}${S.dayOffset?' · simulated':''}</div><h1 class="h-view">Today</h1><p class="greet">${greeting()}, ${esc(S.name||'there')}</p></div><button class="avatar" data-act="settings" aria-label="Profile and settings">${esc((S.name||'P')[0].toUpperCase())}</button></header>`;
+
+  // Score hero
+  h+=`<button class="hero" data-act="score" aria-label="Pausa Score details">
+    <div class="hero-top"><span class="label">Pausa Score</span>${S.examMode?'<span class="pill">'+ic('book','xs')+'Exam Week</span>':''}</div>
+    <div class="hero-num">${sc==null?`<span class="big" style="color:var(--muted)">–</span>`:`<span class="big" data-count="${sc}">${sc}</span>`}
+      <div class="hero-side"><span class="band-name">${b.name}</span>${sc==null?`<span class="delta">${cal}/3 nights learned</span>`:dlt==null?'':`<span class="delta ${dlt>0?'up':dlt<0?'down':''}">${dlt>0?'+':''}${dlt} since yesterday</span>`}</div></div>
+    ${rhythmLine(tk)}
+    <div class="hero-hint">${esc(b.line)} ${ic('chev','xs')}</div></button>`;
+
+  // Install as an app
+  if(canInstall()){
+    h+=`<div class="banner install"><span class="app-ic">${ic('mark')}</span><button class="grow" data-act="install" style="text-align:left"><div class="row-t">Add PAUSA to your home screen</div><div class="row-s">Opens full screen, works offline</div></button><button class="xbtn" data-act="install-x" aria-label="Dismiss">${ic('close','xs')}</button></div>`;
+  }
+  // Morning check-in
+  const yr=rec(yKey());
+  if(yr&&yr.lightsOut&&!yr.wake&&(new Date().getHours()<14||S.dayOffset>0)){
+    h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">How did you wake up?</h2><span class="meta mono">+5 pts</span></div>
+      <div class="checkin">${[['foggy','Foggy'],['okay','Okay'],['fresh','Fresh']].map(x=>`<button data-act="checkin" data-arg="${x[0]}">${x[1]}</button>`).join('')}</div>
+      <p class="note">${ic('info','xs')}Self-reported. PAUSA uses it to show you patterns, never as a medical measure.</p></section>`;
+  }
+  // Wind-down banner
+  const m=nowMin(),ws=toMin(windStart()),bt=toMin(S.bedtime);
+  if(S.dayOffset===0&&!r.windDown&&!r.lightsOut&&m>=ws&&m<bt+60){
+    h+=`<button class="banner" data-act="tab" data-arg="sleep">${ic('moon')}<div class="grow"><div class="row-t">Wind-down time</div><div class="row-s">Lights out at ${S.bedtime}. Start your routine now.</div></div>${ic('chev','sm chev')}</button>`;
+  }
+  // Grace prompt
+  if(yesterdayMissed()&&graceAvailable()&&rec(yKey())){
+    h+=`<button class="banner warn" data-act="tab" data-arg="sleep">${ic('shield')}<div class="grow"><div class="row-t">Last night slipped</div><div class="row-s">Use your Grace Night to protect the streak.</div></div>${ic('chev','sm chev')}</button>`;
+  }
+
+  // Next reset
+  const ty=TYPES[nr.type];const doneT=res>=tgt;
+  let eyebrow,title,sub,btn;
+  if(nr.kind==='now'){eyebrow=`<span>If</span><b>${esc(nr.cls.code)} ends</b><span class="arrow">→</span><span>then</span><b>${ty.name}</b>`;title=`${esc(nr.cls.title)} just ended`;sub=`Your 3-minute ${ty.name.toLowerCase()} reset is ready.`;btn=`<button class="btn pri" data-act="start-reset" data-arg="${nr.type}" data-cls="${nr.cls.id}">${ic('play','sm')}Start reset</button>`}
+  else if(nr.kind==='later'){eyebrow=`<span>If</span><b>${esc(nr.cls.code)} ends</b><span class="arrow">→</span><span>then</span><b>${ty.name}</b>`;title=nr.inClass?`In ${esc(nr.inClass.title)} until ${nr.inClass.end}`:`Next: after ${esc(nr.cls.title)}`;sub=`${ty.long} at ${nr.cls.end}. PAUSA will prompt you when class ends.`;btn=`<button class="btn sec" data-act="start-reset" data-arg="${nr.type}" data-cls="${nr.cls.id}">Start now</button>`}
+  else{eyebrow=`<span>Recommended</span><span class="arrow">·</span><b>${ty.name}</b>`;title=doneT?'Target done. Extra resets still count.':`A 3-minute ${ty.name.toLowerCase()} reset fits now`;sub=ty.desc;btn=`<button class="btn pri" data-act="start-reset" data-arg="${nr.type}">${ic('play','sm')}Start reset</button>`}
+  h+=`<section class="next"><div class="ifthen">${eyebrow}</div><h3>${title}</h3><p class="body2">${sub}</p><div class="next-row">${btn}<span class="meta mono">${Math.min(res,9)}/${tgt} today</span></div></section>`;
+
+  // Strip
+  const stakeTxt=S.stake&&S.stake.status==='active'&&S.stake.night===tk?`${S.stake.amount} staked`:'tonight';
+  h+=`<div class="strip">
+    <button data-act="tab" data-arg="reset"><span class="label">Resets</span><span class="v">${res}<small>/${tgt}</small></span></button>
+    <button data-act="tab" data-arg="sleep"><span class="label">Bed</span><span class="v">${S.bedtime}</span></button>
+    <button data-act="tab" data-arg="progress"><span class="label">Streak</span><span class="v">${stk}<small> n</small></span></button>
+    <button data-act="tab" data-arg="progress"><span class="label">Points</span><span class="v">${S.points}</span></button></div>`;
+
+  // Timetable
+  const cls=todayClasses();
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Today's classes</h2><button class="link" data-act="edit-tt">Edit</button></div>`;
+  if(!cls.length){
+    h+=`<div class="panel pad gap12"><p class="row-t">No classes ${WDL[wdi(t)].toLowerCase().endsWith('day')?'on '+WDL[wdi(t)]:'today'}.</p><p class="body2">Free days count too. One reset and your usual bedtime keep the rhythm going.</p><div class="flex wrap"><button class="btn sm sec" data-act="edit-tt">${ic('plus','xs')}Add a class</button></div></div>`;
+  }else{
+    const done=r.doneTriggers||[];
+    h+=`<div class="tt">`+cls.map(c=>{
+      const s=toMin(c.start),e=toMin(c.end);const live=S.dayOffset===0;
+      const state=live?(m>=e?'past':m>=s?'now':''):'';
+      const thenChip=c.then?(done.includes(c.id)?`<span class="chip acc">${ic('check','xs')}${TYPES[c.then].name} done</span>`:`<span class="chip">then ${TYPES[c.then].name}</span>`):`<span class="chip ghost">${ic('plus','xs')}Add if-then</span>`;
+      return `<button class="tt-item ${state}" data-act="edit-tt"><div class="tt-time">${c.start}<span>${c.end}</span></div><div class="tt-rail"><span class="tt-dot"></span></div><div class="tt-body"><div class="tt-title">${esc(c.title)}</div><div class="tt-sub">${esc(c.code)} · ${esc(c.room)}${state==='now'?' · <span class="acc">in class</span>':''}</div><div class="tt-then">${thenChip}</div></div></button>`;
+    }).join('')+`</div>`;
+  }
+  h+=`</section>`;
+
+  // Exam + tonight
+  h+=`<section class="group">
+    <div class="row"><span class="ico-badge ice">${ic('book','sm')}</span><div class="grow"><div class="row-t">Exam Week Mode</div><div class="row-s">${S.examMode?'On: 2 resets a day, ±45 min bedtime window, study sprints.':'Adjusts targets fairly during exams.'}</div></div><button class="switch" role="switch" aria-label="Exam Week Mode" aria-checked="${S.examMode}" data-act="exam"></button></div>
+    <button class="row" data-act="tab" data-arg="sleep"><span class="ico-badge">${ic('moon','sm')}</span><div class="grow"><div class="row-t">Tonight · lights out ${S.bedtime}</div><div class="row-s">${r.lightsOut?'Recorded at '+r.lightsOut:'Wind-down '+windStart()+' · '+stakeTxt}</div></div>${ic('chev','sm chev')}</button>
+  </section>`;
+  if(S.sample)h+=`<p class="note">${ic('info','xs')}Prototype: earlier history, friends and campus data are sample data. Everything you do today is real and saved on this device.</p>`;
+  return h;
+}
+
+/* ============ RESET ============ */
+function vReset(){
+  const r=T(),tk=todayKey(),tgt=dayTarget(tk),res=r.resets||0,nr=nextReset(),rec0=nr.type;
+  let h=`<header class="vh"><div class="vh-l"><div class="label">3 minutes · no equipment</div><h1 class="h-view">Reset</h1></div><span class="pill ${res>=tgt?'':'mute'}">${res}/${tgt} today</span></header>`;
+  h+=`<section class="feature"><div class="between"><span class="label acc">Recommended now</span><span class="meta">${nr.cls?'after '+esc(nr.cls.code):'free time'}</span></div>
+    <div class="feature-vis">${miniVis(rec0)}</div>
+    <div class="gap8"><h2 class="h-sec">${TYPES[rec0].long}</h2><p class="body2">${TYPES[rec0].desc}</p></div>
+    <button class="btn pri block" data-act="start-reset" data-arg="${rec0}" ${nr.cls?`data-cls="${nr.cls.id}"`:''}>${ic('play','sm')}Begin 3-minute reset</button></section>`;
+  h+=`<section class="gap12"><h2 class="h-sec">All resets</h2><div class="group">`+Object.keys(TYPES).map(k=>{const t=TYPES[k];const n=(r.types||[]).filter(x=>x===k).length;
+    return `<button class="mod" data-act="start-reset" data-arg="${k}"><span class="mod-ic">${ic(t.icon)}</span><div class="grow" style="flex:1;min-width:0"><div class="row-t">${t.long}</div><div class="row-s">${t.desc}</div></div><div style="text-align:right"><div class="mono meta">3:00</div>${n?`<div class="acc" style="font-size:12px">${n}× today</div>`:''}</div></button>`}).join('')+`</div></section>`;
+  if(S.examMode){
+    const sp=S.sprint;let body;
+    if(sp){const left=sp.start+sp.dur-Date.now();
+      body=left>0?`<div class="between"><div><div class="big" id="sprint-time" style="font-size:52px">${fmtClock(left/1000)}</div><div class="meta">Focus. Your reset is waiting at the end.</div></div></div><div class="grid2"><button class="btn sec" data-act="sprint-stop">Stop</button><button class="btn ghost" data-act="sprint-skip">Finish now (demo)</button></div>`
+      :`<p class="row-t">Sprint complete. Time to reset.</p><button class="btn pri block" data-act="sprint-reset">${ic('play','sm')}Take your 3-minute reset</button>`;}
+    else body=`<p class="body2">50 minutes of focused study, then a 3-minute reset. Repeat. Built for exam weeks.</p><button class="btn sec block" data-act="sprint-start">${ic('sprint','sm')}Start 50-minute sprint</button>`;
+    h+=`<section class="panel pad gap12"><div class="between"><h2 class="h-sec">Study sprint</h2><span class="pill">${ic('book','xs')}Exam Week</span></div>${body}</section>`;
+  }
+  const ty=r.types||[];
+  h+=`<section class="gap12"><h2 class="h-sec">Today's sessions</h2>`;
+  h+=ty.length?`<div class="group">`+ty.map((t,i)=>`<div class="row"><span class="ico-badge">${ic(TYPES[t].icon,'sm')}</span><div class="grow"><div class="row-t">${TYPES[t].long}</div><div class="row-s">Session ${i+1}${i<3?' · +10 pts':' · beyond daily points cap'}</div></div>${ic('check','sm acc')}</div>`).join('')+`</div>`
+    :`<div class="panel pad"><p class="body2">No resets yet today. Your first one counts the most: it adds ${dayTarget(tk)>=2?15:20} points to today's score.</p></div>`;
+  h+=`</section><p class="note">${ic('info','xs')}Up to 3 resets a day earn points, so the score rewards a habit, not a marathon.</p>`;
+  return h;
+}
+function fmtClock(s){s=Math.max(0,Math.ceil(s));return pad2(Math.floor(s/60))+':'+pad2(s%60)}
+function miniVis(t){
+  if(t==='breath')return `<svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true"><circle cx="60" cy="60" r="54" fill="none" stroke="var(--line-2)"/><circle cx="60" cy="60" r="38" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"><animate attributeName="r" values="26;44;44;26" keyTimes="0;.3;.55;1" dur="7s" repeatCount="indefinite"/></circle></svg>`;
+  if(t==='eyes')return `<svg viewBox="0 0 160 100" width="160" height="100" aria-hidden="true"><path d="M10 50 Q80 -6 150 50 Q80 106 10 50Z" fill="none" stroke="var(--ice)" stroke-width="1.5"/><circle r="5" fill="var(--accent)"><animateMotion dur="5s" repeatCount="indefinite" path="M80 50 C110 20 130 80 80 50 C30 20 50 80 80 50Z"/></circle></svg>`;
+  return `<svg viewBox="0 0 200 160" width="150" height="120" aria-hidden="true">${figure('pose-tl')}</svg>`;
+}
+function figure(){return `<g class="shoulders"><path d="M28 156C38 124 66 116 100 116s62 8 72 40" fill="none" stroke="var(--ice)" stroke-width="2" stroke-linecap="round"/></g><path d="M100 98v18" stroke="var(--ice)" stroke-width="2" stroke-linecap="round"/><g class="head"><circle cx="100" cy="66" r="28" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/><g class="nose"><path d="M100 64v10" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/></g></g>`}
+
+/* ============ SLEEP ============ */
+function vSleep(){
+  const r=T(),tk=todayKey(),ub=(()=>{let d=toMin(S.bedtime)-nowMin();if(d<-240)d+=1440;return d})();
+  const stake=S.stake&&S.stake.night===tk?S.stake:null;
+  let h=`<header class="vh"><div class="vh-l"><div class="label">Tonight's commitment</div><h1 class="h-view">Sleep</h1></div><span class="pill">${ic('bars','xs')}${streak()}-night streak</span></header>`;
+  h+=`<section class="commit"><span class="label">Lights out</span><div class="big">${S.bedtime}</div>
+    <div class="sleep-meta"><span>Wake <b>${S.wake}</b></span><span>Window <b>${fmtDur(sleepWin())}</b></span><span>${r.lightsOut?'Recorded <b>'+r.lightsOut+'</b>':S.dayOffset?'Simulated day':(ub>0?'In <b>'+fmtDur(ub)+'</b>':'<b class="warnc">Past bedtime</b>')}</span></div></section>`;
+  h+=r.lightsOut?`<div class="banner">${ic('check')}<div class="grow"><div class="row-t">Lights out recorded at ${r.lightsOut}</div><div class="row-s">${kept(tk)?'In rhythm tonight.':'Later than planned. Tomorrow is a fresh bar.'}</div></div></div>${S.sample?`<button class="btn sec block" data-act="advance">${ic('sun','sm')}Skip to tomorrow morning (demo)</button>`:''}`
+    :`<button class="btn pri block lo-btn" data-act="lights-out">${ic('moon')}Lights out</button>`;
+  h+=nightTimeline();
+
+  // Bedtime selector
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Your sleep window</h2><span class="meta">Pick times you can keep</span></div>
+    <div class="panel pad gap16">
+      <div class="gap8"><span class="label">Lights out</span><div class="stepper"><button class="sbtn" data-act="bed" data-arg="-15" aria-label="Earlier">${ic('minus','sm')}</button><span class="sval">${S.bedtime}</span><button class="sbtn" data-act="bed" data-arg="15" aria-label="Later">${ic('plus','sm')}</button></div></div>
+      <div class="hr"></div>
+      <div class="gap8"><span class="label">Wake up</span><div class="stepper"><button class="sbtn" data-act="wake" data-arg="-15" aria-label="Earlier">${ic('minus','sm')}</button><span class="sval">${S.wake}</span><button class="sbtn" data-act="wake" data-arg="15" aria-label="Later">${ic('plus','sm')}</button></div></div>
+      ${sleepWin()<360?`<p class="err">${ic('info','xs')}Under 6 hours. A later wake-up or earlier bedtime will be easier to keep.</p>`:sleepWin()>600?`<p class="err">${ic('info','xs')}Over 10 hours. Most people won't keep this on class days.</p>`:`<p class="meta">Changes apply from tonight. Past nights keep the bedtime they had.</p>`}
+    </div></section>`;
+
+  // Stake
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Stake on tonight</h2><span class="meta">Optional</span></div><div class="panel pad gap12">`;
+  if(stake&&stake.status==='active'){h+=`<div class="between"><div><div class="row-t">${stake.amount} points at stake</div><div class="row-s">Keep ${S.bedtime} ±${dayWin(tk)} min → +${stake.amount}. Miss → −${Math.round(stake.amount/2)}.</div></div>${ic('diamond','acc')}</div>${r.lightsOut?'':`<button class="btn ghost sm" data-act="unstake">Cancel stake</button>`}`}
+  else if(stake){h+=`<p class="row-t">${stake.status==='won'?'Stake won: +'+stake.amount+' points':'Stake lost: −'+Math.round(stake.amount/2)+' points'}</p><p class="body2">Stakes reset each night.</p>`}
+  else if(r.lightsOut){h+=`<p class="body2">Tonight is already recorded. You can stake again tomorrow.</p>`}
+  else{h+=`<p class="body2">Put points on keeping your bedtime. A miss costs only half, so one bad night never wipes you out.</p><div class="seg" role="group" aria-label="Stake amount">${[25,50,100].map(a=>`<button data-act="stake-amt" data-arg="${a}" aria-pressed="${(S._stakeAmt||50)===a}">${a} pts</button>`).join('')}</div>
+    <button class="btn sec block" data-act="stake" ${S.points<(S._stakeAmt||50)?'disabled':''}>${ic('diamond','sm')}Stake ${(S._stakeAmt||50)} points</button>${S.points<(S._stakeAmt||50)?`<p class="err">${ic('info','xs')}You have ${S.points} points. Pick a smaller stake.</p>`:`<p class="meta">Balance ${S.points} points</p>`}`}
+  h+=`</div></section>`;
+
+  // Wind-down routine
+  const wd=r.wd||{};const steps=[['close','Close the study tabs','Save your work and write tomorrow\'s first task.'],['phone','Phone on charge, across the room','Out of reach makes "one more video" harder.'],['dim','Lights low, screen warm','Dim the room and switch on night colours.'],['breathe','One minute of slow breathing','Breathe out longer than you breathe in.']];
+  const nDone=steps.filter(s=>wd[s[0]]).length;
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Wind-down</h2><span class="meta mono">${windStart()}–${S.bedtime}</span></div>
+    <div class="group"><div class="row"><span class="ico-badge ice">${ic('bell','sm')}</span><div class="grow"><div class="row-t">Remind me at ${windStart()}</div><div class="row-s">30 minutes before lights out</div></div><button class="switch" role="switch" aria-label="Wind-down reminder" aria-checked="${S.windReminder}" data-act="wind-rem"></button></div></div>
+    <div class="group">${steps.map(s=>`<button class="wd-step" role="checkbox" aria-checked="${!!wd[s[0]]}" data-act="wd" data-arg="${s[0]}"><span class="tick">${ic('check')}</span><div class="grow"><div class="row-t">${s[1]}</div><div class="row-s">${s[2]}</div></div></button>`).join('')}</div>
+    <p class="meta">${r.windDown?'<span class="acc">Wind-down complete · +15 to tonight\'s score</span>':nDone+' of 4 done'}</p></section>`;
+
+  // Me-time
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Me-time block</h2><button class="switch" role="switch" aria-label="Me-time block" aria-checked="${S.meTime}" data-act="metime"></button></div>
+    <div class="panel pad gap12"><p class="body2">Guilt-free time you plan before wind-down, so time for yourself stops coming out of your sleep.</p>
+    ${S.meTime?`<div class="stepper"><button class="sbtn" data-act="me" data-arg="-15" aria-label="Earlier">${ic('minus','sm')}</button><div class="center"><span class="sval" style="font-size:30px">${S.meStart}–${windStart()}</span><div class="meta">${fmtDur(Math.max(0,toMin(windStart())-toMin(S.meStart)))} for you</div></div><button class="sbtn" data-act="me" data-arg="15" aria-label="Later">${ic('plus','sm')}</button></div>`:'<p class="meta">Off. Turn it on to plan your evening.</p>'}</div></section>`;
+
+  // Grace
+  const gA=graceAvailable(),yM=yesterdayMissed();
+  h+=`<section class="panel pad gap12"><div class="flex">${ic('shield','acc')}<h2 class="h-sec">Grace Night</h2></div>
+    <p class="body2">One night a week can slip without breaking your streak. It's excluded from your Pausa Score, so a birthday or a deadline doesn't cost you.</p>
+    ${yM&&gA?`<button class="btn pri block" data-act="grace">Use Grace Night for last night</button>`:`<span class="pill ${gA?'':'mute'}">${gA?'1 available this week':'Used this week · back in '+graceBack()+' days'}</span>`}</section>`;
+
+  // Calendar
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Consistency</h2><span class="meta">Last 4 weeks</span></div>${calendar()}</section>`;
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">This week</h2><span class="meta">Lights out vs ${S.bedtime}</span></div><div class="panel pad">${weekChart()}</div></section>`;
+  return h;
+}
+function graceBack(){for(let i=0;i<7;i++){const r=rec(ymd(addDays(now(),-i)));if(r&&r.grace)return 7-i}return 0}
+function nightTimeline(){
+  const W=320,H=74,start=20*60,span=12*60;const x=m=>{let d=m-start;if(d<0)d+=1440;return 8+(d/span)*(W-16)};
+  const bed=toMin(S.bedtime),wake=toMin(S.wake),ws=bed-30,me=toMin(S.meStart);
+  const seg=(a,b,y,h,fill,op)=>{const xa=x(a),xb=x(b);return xb>xa?`<rect x="${xa}" y="${y}" width="${xb-xa}" height="${h}" rx="${h/2}" fill="${fill}" fill-opacity="${op}"/>`:''};
+  let g='';
+  for(let hh=20;hh<=32;hh+=2){const mm=(hh%24)*60;g+=`<line x1="${x(mm)}" x2="${x(mm)}" y1="14" y2="50" stroke="var(--line)"/><text x="${x(mm)}" y="64" text-anchor="middle">${pad2(hh%24)}</text>`}
+  return `<div class="panel pad gap12"><span class="label">Your evening</span><svg class="tl" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evening timeline">${g}
+    ${S.meTime?seg(me,ws,22,8,'var(--ice)',.55):''}${seg(ws,bed,22,8,'var(--accent)',.35)}${seg(bed,wake,20,12,'var(--accent)',.9)}
+    <circle cx="${x(bed)}" cy="26" r="4" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/></svg>
+    <div class="legend">${S.meTime?'<span><i style="background:var(--ice)"></i>Me-time</span>':''}<span><i style="background:var(--accent);opacity:.45"></i>Wind-down</span><span><i style="background:var(--accent)"></i>Sleep window</span></div></div>`;
+}
+function calendar(){
+  const t=now(),f=firstKey(),tk=todayKey();const end=addDays(t,6-wdi(t)),startD=addDays(end,-27);
+  let h=`<div class="panel pad gap12"><div class="cal">`+WD.map(d=>`<span class="wd">${d[0]}</span>`).join('');
+  for(let i=0;i<28;i++){const d=addDays(startD,i),k=ymd(d),r=rec(k);let c='none';
+    if(k>tk)c='future';else if(k===tk)c=r&&r.lightsOut?(kept(k)?'kept':'late'):'today';else if(f&&k>=f){c=r&&r.grace?'grace':kept(k)?'kept':'late'}
+    h+=`<span class="cd ${c}" title="${k}">${d.getDate()}</span>`}
+  return h+`</div><div class="legend"><span><i style="background:var(--accent)"></i>In rhythm</span><span><i style="border:1.5px solid var(--accent)"></i>Grace</span><span><i style="background:var(--warn)"></i>Late or missed</span></div></div>`;
+}
+function weekChart(){
+  const W=320,H=150,l=34,rr=8,top=10,bot=24;const tk=todayKey();
+  const lo=-60,hi=120;const y=v=>top+(Math.min(hi,Math.max(lo,v))-lo)/(hi-lo)*(H-top-bot);
+  const w=dayWin(tk);
+  let g=`<rect x="${l}" y="${y(-w)}" width="${W-l-rr}" height="${y(w)-y(-w)}" fill="var(--accent)" fill-opacity=".1"/>`;
+  [-60,0,60,120].forEach(v=>{g+=`<line x1="${l}" x2="${W-rr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" ${v===0?'':'stroke-dasharray="2 4"'}/><text x="${l-6}" y="${y(v)+3}" text-anchor="end">${v===0?S.bedtime:(v>0?'+':'')+v+'m'}</text>`});
+  const cw=(W-l-rr)/7;
+  for(let i=6;i>=0;i--){const d=addDays(now(),-i),k=ymd(d),r=rec(k),idx=6-i,cx=l+cw*idx+cw/2;
+    g+=`<text x="${cx}" y="${H-6}" text-anchor="middle" ${k===tk?'style="fill:var(--fg)"':''}>${WD[wdi(d)].slice(0,2)}</text>`;
+    if(r&&r.lightsOut){const v=relToBed(r.lightsOut,r.bed||S.bedtime);const ok=kept(k);g+=`<line x1="${cx}" x2="${cx}" y1="${y(0)}" y2="${y(v)}" stroke="${ok?'var(--accent)':'var(--warn)'}" stroke-width="1.5" stroke-opacity=".5"/><circle cx="${cx}" cy="${y(v)}" r="5" fill="${ok?'var(--accent)':'var(--warn)'}"/>${v>hi?`<text x="${cx}" y="${y(hi)-8}" text-anchor="middle">+${v}</text>`:''}`}
+    else if(r&&r.grace)g+=`<circle cx="${cx}" cy="${y(0)}" r="5" fill="none" stroke="var(--accent)" stroke-width="1.5"/>`;
+    else g+=`<circle cx="${cx}" cy="${y(0)}" r="2" fill="var(--line-2)"/>`;}
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Lights-out times this week compared with bedtime">${g}</svg><p class="meta" style="margin-top:8px">Shaded band: your ±${w} min window. Above the line means later than planned.</p>`;
+}
+
+/* ============ PROGRESS ============ */
+function vProgress(){
+  const tk=todayKey(),sc=scoreAt(tk),b=band(sc);
+  let h=`<header class="vh"><div class="vh-l"><div class="label">Your rhythm over time</div><h1 class="h-view">Progress</h1></div><button class="btn sm sec" data-act="report">${ic('share','xs')}Weekly report</button></header>`;
+  // Score + components
+  const comps=weekComps();
+  h+=`<section class="gap16"><div class="between"><div><span class="label">Pausa Score</span><div class="flex" style="align-items:flex-end;gap:12px"><span class="big" style="font-size:64px">${sc==null?'–':sc}</span><span class="band-name" style="padding-bottom:6px">${b.name}</span></div></div></div>
+    <div class="gap12">${[['Rhythm','rhythm',40,'Lights out near your bedtime'],['Reset','reset',30,'Daytime micro-breaks'],['Wind-down','wind',15,'Routine before bed'],['Steadiness','steady',15,'Same time, night after night']].map(c=>`<div class="comp"><div class="comp-h"><span>${c[0]} <span class="meta">· ${c[3]}</span></span><span class="mono">${comps[c[1]]}/${c[2]}</span></div><div class="bar"><i style="width:${comps[c[1]]/c[2]*100}%"></i></div></div>`).join('')}</div>
+    <p class="meta">7-day averages. Pausa Score reflects your habits, not a medical measurement.</p></section>`;
+  // Trend
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Score trend</h2><span class="meta">14 days</span></div><div class="panel pad">${trendChart()}</div></section>`;
+  // KPIs
+  const k=kpis();
+  h+=`<section class="gap12"><h2 class="h-sec">This week</h2><div class="panel pad gap16"><div class="kpis">
+    <div class="kpi"><span class="label">Nights</span><span class="v">${k.nights}<small>/${k.nightsOf}</small></span><span class="meta">in rhythm</span></div>
+    <div class="kpi"><span class="label">Resets</span><span class="v">${k.resets}</span><span class="meta">sessions</span></div>
+    <div class="kpi"><span class="label">Streak</span><span class="v">${streak()}</span><span class="meta">best ${bestStreak()}</span></div></div>
+    <div class="hr"></div>${resetBars()}</div></section>`;
+  // Insight
+  const ins=wakeInsight();
+  if(ins)h+=`<section class="panel pad gap8"><span class="label">Pattern · self-reported</span><p style="font-family:var(--f-ui);font-weight:600;font-size:19px;line-height:1.35;letter-spacing:-.015em">${ins}</p><p class="meta">From your morning check-ins. A pattern in your own answers, not a measurement.</p></section>`;
+  // Achievements
+  const ach=achievements();const got=ach.filter(a=>a.got).length;
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Achievements</h2><span class="meta">${got} of ${ach.length}</span></div><div class="panel pad"><div class="badges">${ach.map(a=>`<button class="badge ${a.got?'got':''}" data-act="badge" data-arg="${a.id}">${medal(a)}<span class="badge-n">${a.name}</span></button>`).join('')}</div></div></section>`;
+  // Rewards
+  h+=rewardsSection();
+  return h;
+}
+function weekComps(){const a={rhythm:0,reset:0,wind:0,steady:0};let n=0;const f=firstKey();for(let i=0;i<7;i++){const k=ymd(addDays(now(),-i));if(!f||k<f)continue;const c=dayComp(k);if(c.grace)continue;a.rhythm+=c.rhythm;a.reset+=c.reset;a.wind+=c.wind;a.steady+=c.steady;n++}if(!n)return a;for(const x in a)a[x]=Math.round(a[x]/n);return a}
+function kpis(){let nights=0,of=0,resets=0;const f=firstKey();for(let i=0;i<7;i++){const k=ymd(addDays(now(),-i)),r=rec(k);if(r)resets+=r.resets||0;if(i===0&&!(r&&r.lightsOut))continue;if(!f||k<f)continue;of++;if(kept(k))nights++}return{nights,nightsOf:of,resets}}
+function trendChart(){
+  const W=320,H=150,l=8,rr=40,top=10,bot=22;const pts=[];
+  for(let i=13;i>=0;i--){const k=ymd(addDays(now(),-i));const s=scoreAt(k);pts.push({i:13-i,s,d:addDays(now(),-i)})}
+  const x=i=>l+i*(W-l-rr)/13,y=v=>top+(1-v/100)*(H-top-bot);
+  let g='';[['Offbeat',20],['Warming up',50],['In tempo',70],['In rhythm',90]].forEach(([n,v])=>{});
+  [40,60,80].forEach(v=>{g+=`<line x1="${l}" x2="${W-rr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${W-rr+6}" y="${y(v)+3}">${v}</text>`});
+  g+=`<text x="${W-rr+6}" y="${y(90)+3}" style="fill:var(--accent)">rhythm</text><text x="${W-rr+6}" y="${y(70)+3}">tempo</text>`;
+  const valid=pts.filter(p=>p.s!=null);
+  if(valid.length<2)return `<svg class="chart" viewBox="0 0 ${W} ${H}">${g}<text x="${(W-rr)/2}" y="${H/2}" text-anchor="middle">Your trend appears after a few nights</text></svg>`;
+  const P2=valid.map(p=>[x(p.i),y(p.s)]);const path=smooth(P2);const id='tg'+(++gid);
+  const last=valid[valid.length-1];
+  [0,7,13].forEach(i=>{const d=pts[i].d;g+=`<text x="${x(i)}" y="${H-5}" text-anchor="${i===0?'start':i===13?'end':'middle'}">${i===13?'Today':d.getDate()+' '+MON[d.getMonth()]}</text>`});
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Pausa Score over 14 days"><defs><linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".2"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>${g}<path d="${path} L${P2[P2.length-1][0]},${H-bot} L${P2[0][0]},${H-bot}Z" fill="url(#${id})"/><path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2"/><circle cx="${x(last.i)}" cy="${y(last.s)}" r="4.5" fill="var(--accent)"/><text x="${x(last.i)-8}" y="${y(last.s)-9}" text-anchor="end" style="fill:var(--fg);font-size:11px">${last.s}</text></svg>`;
+}
+function resetBars(){
+  const W=320,H=96,top=12,bot=18;const vals=[];for(let i=6;i>=0;i--){const d=addDays(now(),-i),r=rec(ymd(d));vals.push({n:r?Math.min(3,r.resets||0):0,d,t:dayTarget(ymd(d))})}
+  const bw=(W)/7,y=v=>top+(1-v/3)*(H-top-bot);
+  let g=`<line x1="0" x2="${W}" y1="${y(S.resetTarget||1)}" y2="${y(S.resetTarget||1)}" stroke="var(--ice)" stroke-dasharray="3 3"/><text x="${W}" y="${y(S.resetTarget||1)-4}" text-anchor="end">target</text>`;
+  vals.forEach((v,i)=>{const cx=i*bw+bw/2,hgt=Math.max(2,(H-top-bot)-(y(v.n)-top));g+=`<rect x="${cx-9}" y="${H-bot-hgt}" width="18" height="${hgt}" rx="4" fill="${v.n>=v.t?'var(--accent)':'var(--line-2)'}"/><text x="${cx}" y="${H-4}" text-anchor="middle">${'MTWTFSS'[wdi(v.d)]}</text>`});
+  return `<div class="gap8"><span class="label">Resets per day</span><svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Resets per day, last 7 days">${g}</svg></div>`;
+}
+function wakeInsight(){
+  let good=0,goodF=0,bad=0,badF=0;Object.keys(S.history).forEach(k=>{const r=S.history[k];if(!r.wake||!r.lightsOut)return;if(kept(k)){good++;if(r.wake==='fresh')goodF++}else{bad++;if(r.wake==='fresh')badF++}});
+  if(good<3)return null;
+  return `On nights you were in rhythm, you woke up <span class="acc">fresh</span> ${goodF} of ${good} times${bad?`; on the other nights, ${badF} of ${bad}.`:'.'}`;
+}
+function achievements(){
+  const H=S.history,ks=Object.keys(H).sort();
+  const total=ks.reduce((a,k)=>a+(H[k].resets||0),0);
+  const triad=ks.some(k=>{const t=H[k].types||[];return['breath','eyes','neck'].every(x=>t.includes(x))});
+  const cb=ks.some(k=>isComeback(k));
+  const checks=ks.filter(k=>H[k].wake).length;
+  return[
+    {id:'first',name:'First Rest',desc:'Complete your first 3-minute reset.',got:total>=1,g:'g_rest'},
+    {id:'triad',name:'Triad',desc:'Breath, Eyes and Neck in a single day.',got:triad,g:'g_triad'},
+    {id:'seven',name:'Seven Bars',desc:'Keep your bedtime seven nights in a row.',got:bestStreak()>=7,g:'g_bars'},
+    {id:'comeback',name:'Comeback',desc:'Back in rhythm the night after a miss. Consistency, not perfection.',got:cb,g:'g_repeat'},
+    {id:'rhythm',name:'In Rhythm',desc:'Reach a Pausa Score of 80.',got:(S.peakScore||0)>=80,g:'g_wave'},
+    {id:'exam',name:'Exam Survivor',desc:'Complete 5 resets with Exam Week Mode on.',got:(S.examResets||0)>=5,g:'g_fermata'},
+    {id:'signal',name:'Morning Signal',desc:'Log 5 morning check-ins.',got:checks>=5,g:'g_sun'},
+    {id:'pod',name:'Pod Player',desc:'Join a challenge with your pod.',got:!!S.podJoined,g:'g_pod'}
+  ];
+}
+function medal(a,size=62){
+  const ticks=Array.from({length:24},(_,i)=>{const an=i/24*Math.PI*2,r1=29,r2=i%6===0?25:27;return `<line x1="${31+Math.cos(an)*r1}" y1="${31+Math.sin(an)*r1}" x2="${31+Math.cos(an)*r2}" y2="${31+Math.sin(an)*r2}"/>`}).join('');
+  const c=a.got?'var(--accent)':'var(--line-2)';
+  return `<span class="medal" style="width:${size}px;height:${size}px"><svg class="ring" viewBox="0 0 62 62" aria-hidden="true"><circle cx="31" cy="31" r="22" fill="${a.got?'var(--accent-soft)':'none'}" stroke="${c}" stroke-width="1.2"/><g stroke="${c}" stroke-width="1" stroke-linecap="round">${ticks}</g></svg>${ic(a.got?a.g:'lock','')}</span>`;
+}
+
+/* Rewards */
+const VOUCHERS=[
+  {id:'print',name:'Printing credit',where:'Campus print centre',cost:200},
+  {id:'coffee',name:'Iced coffee',where:'Campus café',cost:300},
+  {id:'book',name:'10% off',where:'Campus bookstore',cost:450},
+  {id:'gym',name:'Day pass',where:'University fitness centre',cost:600}
+];
+function rewardsSection(){
+  const next=VOUCHERS.filter(v=>!S.vouchers.find(x=>x.id===v.id)).find(v=>v.cost>S.points)||null;
+  let h=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Campus rewards</h2><span class="sim">Sample partners</span></div>`;
+  h+=`<div class="panel pad gap8"><div class="between"><span class="row-t">${S.points} points</span>${next?`<span class="meta">${next.cost-S.points} to ${esc(next.name.toLowerCase())}</span>`:'<span class="meta acc">Every reward unlocked</span>'}</div>${next?`<div class="bar"><i style="width:${Math.min(100,S.points/next.cost*100)}%"></i></div>`:''}<p class="meta">Earn: reset +10 · lights out on time +15 · wind-down +5 · check-in +5</p></div>`;
+  h+=`<div class="group">`+VOUCHERS.map(v=>{const own=S.vouchers.find(x=>x.id===v.id);const can=S.points>=v.cost;
+    return `<div class="vouch"><span class="vmark">${ic('ticket','sm')}</span><div class="grow" style="flex:1;min-width:0"><div class="row-t">${v.name}</div><div class="row-s">${v.where} · ${v.cost} pts</div></div>${own?`<button class="btn sm ghost" data-act="show-voucher" data-arg="${v.id}">View</button>`:`<button class="btn sm ${can?'pri':'sec'}" data-act="redeem" data-arg="${v.id}" ${can?'':'disabled'}>${can?'Redeem':'Locked'}</button>`}</div>`}).join('')+`</div></section>`;
+  return h;
+}
+
+/* ============ CIRCLE ============ */
+const FRIENDS=[
+  {id:'mint',name:'Mint',week:[1,1,1,0,1,1],status:'Lights out 22:48 last night',buddy:true},
+  {id:'ploy',name:'Ploy',week:[1,0,1,1,1,1],status:'Usually winds down at 22:15'},
+  {id:'kaung',name:'Kaung',week:[0,1,1,1,0,1],status:'Exam on Thursday'},
+  {id:'lin',name:'Lin',week:[1,1,1,1,1,1],status:'In rhythm 12 nights'}
+];
+const CHALLENGES=[
+  {id:'c1',title:'Lights out by 23:30',desc:'5 of 7 nights this week',target:5,reward:60,joined:128,kind:'nights'},
+  {id:'c2',title:'Reset after class',desc:'Clear 6 if-then resets this week',target:6,reward:60,joined:74,kind:'triggers'}
+];
+function weekKeys(){const t=now(),mon=addDays(t,-wdi(t));const a=[];for(let i=0;i<=wdi(t);i++)a.push(ymd(addDays(mon,i)));return a}
+function challengeProgress(c){const ks=weekKeys();if(c.kind==='nights')return ks.filter(k=>{const r=rec(k);return r&&r.lightsOut&&relToBed(r.lightsOut,'23:30')<=0}).length;return ks.reduce((a,k)=>{const r=rec(k);return a+((r&&r.doneTriggers)?r.doneTriggers.length:0)},0)}
+function myWeek(){const a=[];for(let i=6;i>=1;i--){a.push(kept(ymd(addDays(now(),-i)))?1:0)}return a}
+function vCircle(){
+  let h=`<header class="vh"><div class="vh-l"><div class="label">Supportive, never a leaderboard</div><h1 class="h-view">Circle</h1></div><span class="sim">Friends simulated</span></header>`;
+  const me=myWeek();const lastNight=[me[5],...FRIENDS.map(f=>f.week[5])].filter(Boolean).length;
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Night Owls Reformed</h2><span class="meta">Your pod</span></div>
+   <div class="panel pad gap12"><div class="between"><div class="avs"><span class="av you">${esc((S.name||'Y')[0].toUpperCase())}</span>${FRIENDS.map(f=>`<span class="av">${f.name[0]}</span>`).join('')}</div><span class="row-t">${lastNight}/5 in rhythm</span></div>
+   <div class="bar"><i style="width:${lastNight/5*100}%"></i></div><p class="body2">Pod goal: 4 of 5 in rhythm on 5 nights this week. Everyone wins together, nobody gets ranked.</p></div>
+   <div class="group"><div class="pod-row"><span class="av you">${esc((S.name||'Y')[0].toUpperCase())}</span><div class="grow" style="flex:1;min-width:0"><div class="row-t">You</div><div class="row-s">${streak()}-night streak</div></div><span class="dots7">${me.map(x=>`<i class="${x?'on':''}"></i>`).join('')}</span></div>
+   ${FRIENDS.map(f=>`<button class="pod-row" data-act="nudge" data-arg="${f.id}"><span class="av">${f.name[0]}</span><div class="grow" style="flex:1;min-width:0"><div class="row-t">${f.name}${f.buddy?' <span class="pill" style="margin-left:4px">Bedtime buddy</span>':''}</div><div class="row-s">${f.status}</div></div><span class="dots7">${f.week.map(x=>`<i class="${x?'on':''}"></i>`).join('')}</span></button>`).join('')}</div>
+   <p class="meta">Tap a friend to send a supportive nudge. Dots show the last 6 nights.</p></section>`;
+  // Buddy
+  const shared=me.reduce((a,x,i)=>a+(x&&FRIENDS[0].week[i]?1:0),0);
+  h+=`<section class="panel pad gap12"><div class="between"><div class="flex"><div class="avs"><span class="av you">${esc((S.name||'Y')[0].toUpperCase())}</span><span class="av">M</span></div><div><div class="row-t">You & Mint</div><div class="row-s">Bedtime buddies</div></div></div><span class="big" style="font-size:40px">${shared}</span></div><p class="body2">Shared nights in rhythm, last 6 nights. When you both tap Lights out, it counts for both.</p></section>`;
+  // Challenges
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Weekly challenges</h2><span class="meta">Resets Monday</span></div>`;
+  CHALLENGES.forEach(c=>{const j=!!S.challenges[c.id];const p=Math.min(c.target,challengeProgress(c));const done=p>=c.target;const cl=S.claimed[c.id+weekKeys()[0]];
+    h+=`<div class="panel pad gap12"><div class="between"><div><div class="row-t">${c.title}</div><div class="row-s">${c.desc} · ${c.joined+(j?1:0)} students joined</div></div><span class="pill ${j?'':'mute'}">+${c.reward}</span></div>
+      ${j?`<div class="gap8"><div class="between"><span class="meta">Your progress</span><span class="mono meta">${p}/${c.target}</span></div><div class="bar"><i style="width:${p/c.target*100}%"></i></div></div>`:''}
+      <div class="flex">${j?(done?(cl?'<span class="chip acc">'+ic('check','xs')+'Reward claimed</span>':`<button class="btn sm pri" data-act="claim" data-arg="${c.id}">Claim ${c.reward} points</button>`):`<button class="btn sm ghost" data-act="join" data-arg="${c.id}">Leave</button>`):`<button class="btn sm sec" data-act="join" data-arg="${c.id}">Join with pod</button>`}</div></div>`});
+  h+=`</section>`;
+  // Campus
+  const mine=weekKeys().reduce((a,k)=>a+((rec(k)||{}).resets||0),0);const base=7412;
+  h+=`<section class="gap12"><div class="sec-h"><h2 class="h-sec">Campus</h2><span class="sim">Sample data</span></div>
+    <div class="panel pad gap12"><div class="flex">${ic('campus','acc')}<span class="row-t">Exam season: 10,000 resets across campus</span></div>
+    <div class="bar"><i style="width:${(base+mine)/100}%"></i></div><div class="between"><span class="meta">${(base+mine).toLocaleString('en-US')} of 10,000</span><span class="meta acc">You added ${mine}</span></div>
+    <div class="hr"></div><p class="body2">Last night, <b>41%</b> of PAUSA students on campus were in rhythm.</p>
+    <p class="note">${ic('lock','xs')}Campus numbers are aggregated across hundreds of students. Your university never sees your name, nights or score.</p></div>
+    <button class="row group" data-act="uni"><span class="ico-badge ice">${ic('chart','sm')}</span><div class="grow"><div class="row-t">University wellness dashboard</div><div class="row-s">Concept: what a wellness office would see</div></div>${ic('chev','sm chev')}</button></section>`;
+  return h;
+}
+
+/* ============ Sheets ============ */
+function openSheet(html){
+  const L=$('#sheet-layer');L.innerHTML=`<div class="scrim" data-act="close-sheet"></div><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+  L.hidden=false;requestAnimationFrame(()=>requestAnimationFrame(()=>L.classList.add('open')));
+}
+function closeSheet(){const L=$('#sheet-layer');L.classList.remove('open');setTimeout(()=>{if(!L.classList.contains('open')){L.hidden=true;L.innerHTML=''}},300)}
+const sheetHead=(eyebrow,title)=>`<div class="sheet-h"><div><div class="label">${eyebrow}</div><h2 class="h-view" style="font-size:28px">${title}</h2></div><button class="xbtn" data-act="close-sheet" aria-label="Close">${ic('close','sm')}</button></div>`;
+
+function sheetScore(){
+  const tk=todayKey(),sc=scoreAt(tk),b=band(sc),c=dayComp(tk),yk=yKey(),yr=rec(yk);
+  let h=sheetHead('Pausa Score',sc==null?'Learning your rhythm':`${sc} · ${b.name}`);
+  // band scale
+  h+=`<div class="gap8"><div style="display:grid;grid-template-columns:40fr 20fr 20fr 20fr;gap:3px">${[['off','Offbeat'],['warm','Warming up'],['tempo','In tempo'],['rhythm','In rhythm']].map(x=>`<div style="height:6px;border-radius:3px;background:${x[0]===b.key?'var(--accent)':'var(--line-2)'}"></div>`).join('')}</div>
+    <div style="display:grid;grid-template-columns:40fr 20fr 20fr 20fr;gap:3px" class="meta">${['Offbeat 0','Warming 40','Tempo 60','Rhythm 80'].map(x=>`<span style="font-size:11px">${x}</span>`).join('')}</div></div>`;
+  if(sc==null)h+=`<p class="body2">Your score appears after 3 nights. Until then PAUSA learns your usual bedtime and reset pattern. ${calibration()}/3 nights so far.</p>`;
+  // today components
+  h+=`<div class="gap12"><span class="label">Today</span>${[['Rhythm','rhythm',40],['Reset','reset',30],['Wind-down','wind',15],['Steadiness','steady',15]].map(x=>{const p=c.pending.includes(x[1]);return `<div class="comp"><div class="comp-h"><span>${x[0]}${p?' <span class="meta">· estimated until lights out</span>':''}</span><span class="mono">${c[x[1]]}/${x[2]}</span></div><div class="bar ${p?'pend':''}"><i style="width:${c[x[1]]/x[2]*100}%"></i></div></div>`}).join('')}</div>`;
+  // what moved
+  const items=[];
+  if(yr&&yr.grace)items.push(['shield','Grace Night used for last night','excluded']);
+  else if(yr&&yr.lightsOut){const d=relToBed(yr.lightsOut,yr.bed||S.bedtime);items.push(['moon',`Lights out ${yr.lightsOut}, ${d===0?'right on time':Math.abs(d)+' min '+(d<0?'early':'late')}`,`Rhythm ${rhythmPts(yk)}/40`])}
+  else if(rec(yk)||(firstKey()&&yk>=firstKey()))items.push(['moon','No lights out recorded last night','Rhythm 0/40']);
+  if(isComeback(yk))items.push(['g_repeat','Comeback after a missed night','+5 steadiness']);
+  const rs=(rec(tk)||{}).resets||0;items.push(['reset',rs?`${rs} reset${rs>1?'s':''} today`:'No reset yet today',`Reset ${c.reset}/30`]);
+  if(c.pending.includes('rhythm'))items.push(['info','Tonight is still ahead','estimated from your week']);
+  h+=`<div class="gap8"><span class="label">What moved your score</span><div class="group">${items.map(i=>`<div class="row">${ic(i[0],'sm muted')}<div class="grow"><div class="row-t" style="font-size:14.5px">${esc(i[1])}</div></div><span class="mono meta">${esc(i[2])}</span></div>`).join('')}</div></div>`;
+  // one thing
+  const r=T();let one,btn='';
+  if((r.resets||0)<dayTarget(tk)){const nr=nextReset();one=nr.cls?`Take your ${TYPES[nr.type].name.toLowerCase()} reset after ${nr.cls.title} (${nr.cls.end}).`:`Take a 3-minute ${TYPES[nr.type].name.toLowerCase()} reset now.`;btn=`<button class="btn pri block" data-act="start-reset" data-arg="${nr.type}" ${nr.cls?`data-cls="${nr.cls.id}"`:''}>${ic('play','sm')}Start reset</button>`}
+  else if(!r.windDown&&!r.lightsOut){one=`Start wind-down at ${windStart()}. It adds 15 points tonight.`;btn=`<button class="btn sec block" data-act="tab-close" data-arg="sleep">Open Sleep</button>`}
+  else if(!r.lightsOut){one=`Lights out by ${S.bedtime}. Rhythm is 40% of your score.`}
+  else one='Today is done. Rest well and keep the same bedtime tomorrow.';
+  h+=`<div class="panel pad gap12"><span class="label acc">One thing to lift it</span><p style="font-family:var(--f-ui);font-weight:600;font-size:19px;line-height:1.35;letter-spacing:-.015em">${esc(one)}</p>${btn}</div>`;
+  h+=`<div class="gap8"><span class="label">How it works</span><p class="body2">Each day scores up to 100: Rhythm 40, Reset 30, Wind-down 15, Steadiness 15. Your Pausa Score is the average of the last 7 days, so one bad night moves it a little, never to zero. Grace Nights are left out, and coming back after a miss earns a bonus.</p><p class="note">${ic('info','xs')}Pausa Score reflects your habits, not a medical measurement. PAUSA does not measure sleep.</p></div>`;
+  openSheet(h);
+}
+
+function sheetSettings(){
+  let h=sheetHead('Profile','Settings');
+  h+=`<div class="field"><label for="set-name">Name</label><input class="input" id="set-name" value="${esc(S.name)}" maxlength="24" autocomplete="given-name"></div>`;
+  h+=`<div class="gap8"><span class="label">Theme</span><div class="seg" role="group" aria-label="Theme">${[['night','Night'],['day','Day'],['auto','Auto']].map(t=>`<button data-act="theme" data-arg="${t[0]}" aria-pressed="${S.theme===t[0]}">${t[1]}</button>`).join('')}</div><p class="meta">Sleep always goes deep ocean. Auto follows your phone.</p></div>`;
+  h+=`<div class="gap8"><span class="label">Daily reset target</span><div class="seg" role="group" aria-label="Daily reset target">${[1,2].map(n=>`<button data-act="target" data-arg="${n}" aria-pressed="${(S.resetTarget||1)===n}">${n} a day</button>`).join('')}</div></div>`;
+  h+=`<div class="gap8"><span class="label">Reset types</span><div class="group">${Object.keys(TYPES).map(k=>`<div class="row"><span class="ico-badge">${ic(TYPES[k].icon,'sm')}</span><div class="grow"><div class="row-t">${TYPES[k].long}</div></div><button class="switch" role="switch" aria-label="${TYPES[k].long}" aria-checked="${!!S.prefs[k]}" data-act="pref" data-arg="${k}"></button></div>`).join('')}</div></div>`;
+  h+=`${canInstallAny()?`<button class="row group" data-act="install"><span class="app-ic" style="width:38px;height:38px">${ic('mark')}</span><div class="grow"><div class="row-t">Add to home screen</div><div class="row-s">Install PAUSA like an app</div></div>${ic('chev','sm chev')}</button>`:''}
+  <div class="gap8"><span class="label">Demo tools</span><div class="group">
+    <button class="row" data-act="advance">${ic('sun','sm acc')}<div class="grow"><div class="row-t">Skip to tomorrow morning</div><div class="row-s">${S.dayOffset?'Simulated +'+S.dayOffset+' day'+(S.dayOffset>1?'s':''):'Demo the morning check-in and streaks'}</div></div></button>
+    ${S.dayOffset?`<button class="row" data-act="realdate">${ic('today','sm acc')}<div class="grow"><div class="row-t">Back to the real date</div></div></button>`:''}
+    <button class="row" data-act="simulated">${ic('info','sm acc')}<div class="grow"><div class="row-t">What's real and what's simulated</div></div>${ic('chev','sm chev')}</button>
+    <button class="row" data-act="replay">${ic('g_repeat','sm acc')}<div class="grow"><div class="row-t">Replay onboarding</div><div class="row-s">Keeps your progress</div></div></button>
+    <button class="row" data-act="erase-ask">${ic('trash','sm warnc')}<div class="grow"><div class="row-t warnc">Erase all data</div></div></button></div><div id="erase-box"></div></div>`;
+  h+=`<p class="note">${ic('lock','xs')}All data is stored only on this phone. Nothing is sent anywhere. Deleting the app or clearing Safari data erases it.</p>
+  <div class="center gap8" style="padding-top:4px;justify-items:center"><span class="app-ic">${ic('mark')}</span><p class="meta">PAUSA · Reset your rhythm, recharge your potential.<br>Made by Team YouthRise · Bangkok University International</p></div>`;
+  openSheet(h);
+  const n=$('#set-name');if(n)n.addEventListener('change',()=>{const v=n.value.trim();if(v){S.name=v;save();render(true)}});
+}
+function sheetSimulated(){
+  let h=sheetHead('Prototype','Real vs simulated');
+  h+=`<div class="gap8"><span class="label acc">Works in this prototype</span><div class="group">${['Onboarding, Night / Day / Auto themes','3-minute Breath, Eyes and Neck sessions with real timers','Pausa Score, Rhythm Line, streaks and Grace Night','Bedtime, wake time, wind-down routine and Me-time','Points, staking and voucher redemption','Editable timetable with if-then resets','Exam Week Mode and study sprints','Everything saved on this device (localStorage)'].map(x=>`<div class="row">${ic('check','sm acc')}<div class="grow body2">${x}</div></div>`).join('')}</div></div>`;
+  h+=`<div class="gap8"><span class="label">Simulated · needs a backend or native app</span><div class="group">${['Two weeks of sample history (if chosen at setup)','Friends, pods, bedtime buddy and challenge participant counts','Campus totals and the university dashboard','Voucher partners and codes','Push notifications (shown as in-app banners)','Automatic timetable import from the university','Accounts, sync across devices, sharing to Instagram'].map(x=>`<div class="row">${ic('info','sm muted')}<div class="grow body2">${x}</div></div>`).join('')}</div></div>`;
+  openSheet(h);
+}
+function sheetTimetable(day){
+  day=day==null?wdi(now()):day;S._ttDay=day;
+  const list=(S.timetable[day]||[]).slice().sort((a,b)=>toMin(a.start)-toMin(b.start));
+  let h=sheetHead('Timetable','Your classes');
+  h+=`<div class="seg" role="group" aria-label="Day">${WD.map((d,i)=>`<button data-act="tt-day" data-arg="${i}" aria-pressed="${i===day}">${d.slice(0,2)}</button>`).join('')}</div>`;
+  h+=list.length?`<div class="group">${list.map(c=>`<div class="row" style="align-items:flex-start"><div class="mono meta" style="width:46px;padding-top:2px">${c.start}<br>${c.end}</div><div class="grow"><div class="row-t">${esc(c.title)}</div><div class="row-s">${esc(c.code)} · ${esc(c.room)}</div>
+      <div class="flex wrap" style="margin-top:8px;gap:6px"><span class="meta" style="font-size:12px">If it ends, then</span>${['breath','eyes','neck',''].map(t=>`<button class="chip ${c.then===t||(!c.then&&!t)?'acc':''}" data-act="tt-then" data-arg="${c.id}" data-t="${t}">${t?TYPES[t].name:'None'}</button>`).join('')}</div></div>
+      <button class="xbtn" data-act="tt-del" data-arg="${c.id}" aria-label="Remove ${esc(c.title)}">${ic('trash','xs')}</button></div>`).join('')}</div>`:`<div class="panel pad"><p class="body2">No classes on ${WDL[day]}.</p></div>`;
+  h+=`<div class="panel pad gap12"><span class="label">Add a class</span>
+    <div class="field"><label for="tt-title">Class name</label><input class="input" id="tt-title" placeholder="e.g. Marketing Research"></div>
+    <div class="grid2"><div class="field"><label for="tt-code">Code</label><input class="input" id="tt-code" placeholder="MKT310"></div><div class="field"><label for="tt-room">Room</label><input class="input" id="tt-room" placeholder="A3-402"></div></div>
+    <div class="grid2"><div class="field"><label for="tt-start">Starts</label><input class="input" type="time" id="tt-start" value="09:00"></div><div class="field"><label for="tt-end">Ends</label><input class="input" type="time" id="tt-end" value="10:30"></div></div>
+    <div class="field"><label for="tt-then">If it ends, then</label><select class="input" id="tt-then"><option value="breath">Breath reset</option><option value="eyes" selected>Eyes reset</option><option value="neck">Neck reset</option><option value="">No reset</option></select></div>
+    <div id="tt-err"></div><button class="btn pri block" data-act="tt-add">${ic('plus','sm')}Add to ${WDL[day]}</button></div>`;
+  h+=`<p class="note">${ic('info','xs')}The full app would import your timetable from the university system. Here you edit a sample.</p>`;
+  const L=$('#sheet-layer');
+  if(L.classList.contains('open')&&L.querySelector('.sheet')){L.querySelector('.sheet').innerHTML=`<div class="grab"></div>`+h}else openSheet(h);
+}
+function sheetLightsDemo(){
+  const real=new Date();
+  const nowT=pad2(real.getHours())+':'+pad2(real.getMinutes()),m=real.getHours()*60+real.getMinutes();
+  let h=sheetHead(S.sample?'Demo':'Lights out',S.sample?'Record lights out':'Going to bed now?');
+  h+=`<p class="body2">It's ${nowT} and your bedtime is ${S.bedtime}.${S.sample?' For the demo, choose how tonight goes:':' Record lights out at the real time?'}</p>`;
+  if(!S.sample||S.dayOffset===0)h+=`<button class="btn pri block" data-act="lo-real">${ic('moon','sm')}Lights out at ${nowT}</button>`;
+  if(!S.sample){h+=`<p class="note">${ic('info','xs')}Usually you tap Lights out close to bedtime. Recording much earlier or later still counts, it just scores honestly.</p>`;openSheet(h);return}
+  h+=`<div class="group">${[[-5,'On time','Inside your window: full Rhythm points'],[40,'A bit late','40 minutes after bedtime'],[95,'Late night','Past the window: shows how the score bends, not breaks']].map(o=>`<button class="row" data-act="lo-sim" data-arg="${o[0]}"><span class="mono" style="width:48px">${fromMin(toMin(S.bedtime)+o[0])}</span><div class="grow"><div class="row-t">${o[1]}</div><div class="row-s">${o[2]}</div></div>${ic('chev','sm chev')}</button>`).join('')}</div>`;
+  h+=`<p class="note">${ic('info','xs')}In the real app, lights out is tapped at bedtime and the morning check-in follows.</p>`;
+  openSheet(h);
+}
+function sheetNudge(fid){
+  const f=FRIENDS.find(x=>x.id===fid);
+  let h=sheetHead('Nudge',`Send ${f.name} some support`);
+  h+=`<div class="group">${['Proud of your rhythm this week','Lights out together tonight?','You\'ve got this exam. Sleep is part of studying.','Missed one? Tomorrow is a fresh bar.'].map(m=>`<button class="row" data-act="send-nudge" data-arg="${f.name}"><div class="grow row-t" style="font-size:15px">${m}</div>${ic('arrowr','sm acc')}</button>`).join('')}</div>`;
+  h+=`<p class="note">${ic('heart','xs')}Preset messages only. Circle stays kind by design: no comments, no rankings.</p>`;
+  openSheet(h);
+}
+function sheetReport(){
+  const sc=scoreAt(todayKey()),b=band(sc),k=kpis();const t=now(),mon=addDays(t,-6);
+  const txt=`My PAUSA week: Pausa Score ${sc==null?'calibrating':sc} (${b.name}). ${k.nights}/${k.nightsOf} nights in rhythm, ${k.resets} resets. Reset your rhythm, recharge your potential.`;
+  S._report=txt;
+  let h=sheetHead('Weekly report','Your week in rhythm');
+  h+=`<div class="night-env" style="background:linear-gradient(170deg,#143F74,#04102A 72%);border:1px solid var(--line-2);border-radius:24px;padding:22px;display:grid;gap:14px;color:var(--fg)">
+    <div class="between"><div class="wordmark">${ic('mark')}<span style="font-size:14px">PAUSA</span></div><span class="label">${mon.getDate()} ${MON[mon.getMonth()]} – ${t.getDate()} ${MON[t.getMonth()]}</span></div>
+    <div class="flex" style="align-items:flex-end;gap:14px"><span class="big" style="font-size:72px">${sc==null?'–':sc}</span><span class="band-name" style="padding-bottom:8px">${b.name}</span></div>
+    ${rhythmLine(todayKey(),70)}
+    <div class="kpis"><div class="kpi"><span class="label">Nights</span><span class="v" style="font-size:26px">${k.nights}/${k.nightsOf}</span></div><div class="kpi"><span class="label">Resets</span><span class="v" style="font-size:26px">${k.resets}</span></div><div class="kpi"><span class="label">Streak</span><span class="v" style="font-size:26px">${streak()}</span></div></div></div>`;
+  h+=`<p class="meta">No sleep data on the card, only your rhythm. In the full app this exports straight to Stories.</p><button class="btn pri block" data-act="copy-report">${ic('copy','sm')}Copy summary</button>`;
+  openSheet(h);
+}
+function sheetUni(){
+  let h=sheetHead('Concept · sample data','Campus wellness view');
+  h+=`<div class="kpis panel pad"><div class="kpi"><span class="label">Active</span><span class="v" style="font-size:26px">1,284</span><span class="meta">students</span></div><div class="kpi"><span class="label">Avg score</span><span class="v" style="font-size:26px">63</span><span class="meta">campus</span></div><div class="kpi"><span class="label">Exam week</span><span class="v" style="font-size:26px">+38%</span><span class="meta">resets</span></div></div>`;
+  h+=`<div class="panel pad gap8"><span class="label">Busiest late nights</span><p class="body2">Tuesday and Wednesday, the nights before Statistics and Accounting deadlines. A wellness office could move deadlines or add a quiet-hours campaign.</p></div>`;
+  h+=`<div class="gap8"><span class="label acc">Privacy principles</span><div class="group">${['Aggregates only, never individual students','No group smaller than 50 students is shown','No names, nights, scores or timetables leave the student\'s phone','Students can opt out at any time'].map(x=>`<div class="row">${ic('lock','sm acc')}<div class="grow body2">${x}</div></div>`).join('')}</div></div>`;
+  h+=`<p class="note">${ic('info','xs')}All numbers on this screen are illustrative, to show what a licence buyer would see.</p>`;
+  openSheet(h);
+}
+function sheetBadge(id){const a=achievements().find(x=>x.id===id);let h=sheetHead(a.got?'Unlocked':'Locked',a.name);h+=`<div class="center gap12" style="justify-items:center">${medal(a,110)}<p class="body2" style="max-width:280px">${a.desc}</p></div>`;openSheet(h)}
+function sheetVoucher(id){const v=VOUCHERS.find(x=>x.id===id),o=S.vouchers.find(x=>x.id===id);let h=sheetHead(v.where,v.name);
+  h+=`<div class="panel pad center gap12"><span class="label">Show at the counter</span><div class="mono" style="font-size:26px;letter-spacing:.12em">${o.code}</div><span class="sim" style="justify-self:center">Simulated voucher</span></div><p class="note">${ic('info','xs')}Sample partner. Real vouchers would come from university-sponsored partners.</p>`;openSheet(h)}
+
+/* ============ Session (reset player) ============ */
+let SES=null;
+const EYES=[[0,'Look far away','Find the farthest point you can see, ideally 6 metres or more. Let your eyes rest on it.','far'],[30,'Slow blinks','Blink slowly ten times, closing your eyes fully each time.','blink'],[60,'Follow the dot','Trace the dot with your eyes only. Keep your head still.','dot'],[100,'Palming','Rub your palms warm and cup them over closed eyes. No pressure.','palm'],[140,'Near and far','Look at your hand, then far away. Shift slowly between them.','far']];
+const NECK=[[0,'Shoulder rolls','Roll your shoulders back slowly, five times.','pose-roll'],[30,'Tilt left','Ear towards your left shoulder. Breathe and let it hang.','pose-tl'],[60,'Tilt right','Ear towards your right shoulder. Keep the other shoulder down.','pose-tr'],[90,'Chin tuck','Glide your chin straight back, hold for three seconds, release.','pose-tuck'],[120,'Look over each shoulder','Turn slowly left, then right. Only as far as feels easy.','pose-turn'],[150,'Open the chest','Clasp your hands behind you and lift your chest.','pose-open']];
+function startSession(type,ctx){
+  closeSheet();
+  SES={type,ctx:ctx||{},dur:180,el:0,run:false,speed:1,state:'ready',last:0,raf:0,confirm:false};
+  const el=$('#session');el.hidden=false;el.classList.toggle('night-env',document.body.classList.contains('night-env'));
+  drawSession();
+}
+function stageHTML(){
+  const t=SES.type;
+  if(t==='breath'){const ticks=Array.from({length:60},(_,i)=>{const a=i/60*Math.PI*2-Math.PI/2,r1=128,r2=i%5===0?119:123;return `<line x1="${140+Math.cos(a)*r1}" y1="${140+Math.sin(a)*r1}" x2="${140+Math.cos(a)*r2}" y2="${140+Math.sin(a)*r2}"/>`}).join('');
+    return `<svg viewBox="0 0 280 280" aria-hidden="true"><g stroke="var(--line-2)" stroke-width="1">${ticks}</g><circle cx="140" cy="140" r="132" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="${2*Math.PI*132}" stroke-dashoffset="${2*Math.PI*132}" transform="rotate(-90 140 140)" id="ses-ring"/><g class="breath-core" id="breath-core" style="transform:scale(.55)"><circle cx="140" cy="140" r="100" fill="var(--accent-soft)"/><circle cx="140" cy="140" r="100" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="140" cy="140" r="70" fill="none" stroke="var(--accent-line)" stroke-width="1"/></g></svg>`}
+  const ring=`<circle cx="140" cy="140" r="132" fill="none" stroke="var(--line)" stroke-width="2"/><circle cx="140" cy="140" r="132" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="${2*Math.PI*132}" stroke-dashoffset="${2*Math.PI*132}" transform="rotate(-90 140 140)" id="ses-ring"/>`;
+  if(t==='eyes')return `<svg viewBox="0 0 280 280" aria-hidden="true">${ring}
+    <g id="v-far"><line x1="50" y1="160" x2="230" y2="160" stroke="var(--line-2)"/><circle cx="196" cy="128" r="4" fill="var(--accent)"/><circle cx="196" cy="128" r="8" fill="none" stroke="var(--accent)" class="far-ping"/><path d="M70 160l30-34 22 22 18-14 30 26" fill="none" stroke="var(--ice)" stroke-width="1.5" stroke-linejoin="round"/></g>
+    <g id="v-blink"><g class="blink"><path d="M70 140 Q140 84 210 140 Q140 196 70 140Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/><circle cx="140" cy="140" r="18" fill="none" stroke="var(--accent)" stroke-width="2"/></g></g>
+    <g id="v-dot"><path d="M140 140 C190 90 230 190 140 140 C50 90 90 190 140 140Z" fill="none" stroke="var(--line-2)" stroke-dasharray="3 5"/><circle id="eye-dot" cx="140" cy="140" r="9" fill="var(--accent)"/></g>
+    <g id="v-palm"><circle cx="118" cy="140" r="42" fill="var(--accent-soft)" stroke="var(--accent-line)"/><circle cx="162" cy="140" r="42" fill="var(--accent-soft)" stroke="var(--accent-line)"/><path d="M104 142q14 8 28 0M148 142q14 8 28 0" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/></g></svg>`;
+  return `<svg viewBox="0 0 280 280" aria-hidden="true">${ring}<g transform="translate(40 50)" id="neck-fig">${figure()}</g></svg>`;
+}
+function drawSession(){
+  const s=SES,t=TYPES[s.type],el=$('#session');
+  if(s.state==='done'){
+    el.innerHTML=`<div class="ses-top"><span class="label">Reset complete</span><button class="xbtn" data-act="ses-close" aria-label="Close">${ic('close','sm')}</button></div>
+    <div class="ses-main"><svg class="done-check" viewBox="0 0 120 120" width="120" height="120" aria-hidden="true"><circle cx="60" cy="60" r="54" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/><path d="M38 61l15 15 30-32" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="gap8"><div class="ses-cue">${t.long} done</div><p class="ses-sub">${s.res.pts?'+'+s.res.pts+' points · ':''}Reset ${s.res.n} of ${s.res.tgt} today${s.res.cls?' · if-then cleared':''}</p></div>
+      ${s.res.after!=null?`<div class="panel pad" style="min-width:240px"><span class="label">Pausa Score</span><div class="flex" style="justify-content:center;gap:14px;margin-top:6px"><span class="big" style="font-size:44px;color:var(--muted)">${s.res.before==null?'–':s.res.before}</span>${ic('arrowr','acc')}<span class="big" style="font-size:44px">${s.res.after}</span></div></div>`:`<p class="meta">Your score appears after 3 nights.</p>`}
+      ${s.res.badge?`<div class="flex">${medal({got:true,g:s.res.badge.g},44)}<div style="text-align:left"><div class="label acc">Achievement unlocked</div><div class="row-t">${s.res.badge.name}</div></div></div>`:''}</div>
+    <div class="ses-ctrl"><button class="btn pri block" data-act="ses-close">Done</button></div>`;
+    return;
+  }
+  const steps=s.type==='eyes'?EYES:s.type==='neck'?NECK:null;
+  el.innerHTML=`<div class="ses-top"><button class="xbtn" data-act="ses-end" aria-label="End session">${ic('close','sm')}</button><span class="label">${t.long}</span><button class="chip ${s.speed>1?'acc':''}" data-act="ses-speed" aria-label="Demo speed">${s.speed>1?'Demo ×10':'1×'}</button></div>
+  <div class="ses-main"><div class="ses-stage" id="ses-stage">${stageHTML()}</div>
+    <div class="gap8">${steps?`<div class="stepdots" id="stepdots">${steps.map(()=>'<i></i>').join('')}</div>`:''}<div class="ses-cue" id="ses-cue"></div><p class="ses-sub" id="ses-sub"></p><div class="ses-time" id="ses-time">3:00</div></div></div>
+  <div class="ses-ctrl" id="ses-ctrl"></div>`;
+  updateSession();drawCtrl();
+}
+function drawCtrl(){
+  const s=SES,c=$('#ses-ctrl');if(!c)return;
+  if(s.confirm){c.innerHTML=`<div class="confirm"><p class="row-t">End now?</p><p class="body2">This session won't count towards today's reset.</p><div class="grid2"><button class="btn sec" data-act="ses-keep">Keep going</button><button class="btn ghost" data-act="ses-quit">End session</button></div></div>`;return}
+  if(s.state==='ready')c.innerHTML=`<button class="btn pri block" data-act="ses-play">${ic('play','sm')}Start</button><p class="meta center">${s.type==='neck'?'Move gently. Stop if anything hurts.':s.type==='eyes'?'Take your eyes off the screen when the cue says so.':'Sit tall, shoulders down, phone in your lap.'}</p>`;
+  else if(s.state==='running')c.innerHTML=`<button class="btn sec block" data-act="ses-pause">${ic('pause','sm')}Pause</button>`;
+  else if(s.state==='paused')c.innerHTML=`<div class="grid2"><button class="btn pri" data-act="ses-play">${ic('play','sm')}Resume</button><button class="btn ghost" data-act="ses-end">End</button></div>`;
+}
+function updateSession(){
+  const s=SES;if(!s||s.state==='done')return;
+  const ring=$('#ses-ring');const C=2*Math.PI*132;if(ring)ring.setAttribute('stroke-dashoffset',C*(1-s.el/s.dur));
+  const tm=$('#ses-time');if(tm){const left=s.dur-s.el;tm.textContent=Math.floor(Math.ceil(left)/60)+':'+pad2(Math.ceil(left)%60)}
+  const cue=$('#ses-cue'),sub=$('#ses-sub');
+  if(s.type==='breath'){
+    const c=s.el%14;let sc,txt,n;
+    if(c<4){const p=c/4;sc=.55+.45*(.5-Math.cos(Math.PI*p)/2);txt='Breathe in';n=Math.ceil(4-c)}
+    else if(c<8){sc=1;txt='Hold';n=Math.ceil(8-c)}
+    else{const p=(c-8)/6;sc=1-.45*(.5-Math.cos(Math.PI*p)/2);txt='Breathe out';n=Math.ceil(14-c)}
+    const core=$('#breath-core');if(core)core.style.transform=`scale(${s.state==='ready'?.55:sc})`;
+    if(s.state==='ready'){cue.textContent='In for 4, hold 4, out for 6';sub.textContent='About 13 slow breaths. Follow the circle.'}
+    else{cue.textContent=txt;sub.textContent=n+(s.state==='paused'?' · paused':'')}
+  }else{
+    const steps=s.type==='eyes'?EYES:NECK;let i=0;steps.forEach((st,k)=>{if(s.el>=st[0])i=k});
+    const st=steps[i];cue.textContent=s.state==='ready'?(s.type==='eyes'?'Five steps for tired eyes':'Six gentle moves'):st[1];
+    sub.textContent=s.state==='ready'?(s.type==='eyes'?'Screen breaks, blinking and palming. 3 minutes.':'For the laptop hunch. 30 seconds each.'):st[2];
+    const dots=document.querySelectorAll('#stepdots i');dots.forEach((d,k)=>{d.className=s.state==='ready'?'':(k<i?'done':k===i?'on':'')});
+    if(s.type==='eyes'){['far','blink','dot','palm'].forEach(v=>{const g=$('#v-'+v);if(g)g.style.display=(st[3]===v)?'':'none'});
+      const dot=$('#eye-dot');if(dot&&st[3]==='dot'){const a=s.el*1.3;const x=140+80*Math.cos(a)/(1+Math.sin(a)**2),y=140+60*Math.sin(a)*Math.cos(a)/(1+Math.sin(a)**2);dot.setAttribute('cx',x);dot.setAttribute('cy',y)}}
+    else{const f=$('#neck-fig');if(f)f.setAttribute('class',s.state==='ready'?'':st[3])}
+  }
+}
+let wakeLock=null;
+function play(){const s=SES;s.state='running';s.run=true;s.last=performance.now();cancelAnimationFrame(s.raf);s.raf=requestAnimationFrame(tick);drawCtrl();
+  try{if(navigator.wakeLock&&!wakeLock)navigator.wakeLock.request('screen').then(l=>{wakeLock=l}).catch(()=>{})}catch(e){}}
+function pauseS(){const s=SES;s.state='paused';s.run=false;cancelAnimationFrame(s.raf);drawCtrl();updateSession()}
+function tick(ts){const s=SES;if(!s||!s.run)return;const dt=Math.min(.25,(ts-s.last)/1000);s.last=ts;s.el=Math.min(s.dur,s.el+dt*s.speed);updateSession();if(s.el>=s.dur){finish();return}s.raf=requestAnimationFrame(tick)}
+function finish(){
+  const s=SES;s.run=false;cancelAnimationFrame(s.raf);
+  const tk=todayKey(),before=scoreAt(tk),achBefore=achievements().filter(a=>a.got).map(a=>a.id);
+  const r=T();r.resets=(r.resets||0)+1;(r.types=r.types||[]).push(s.type);if(S.examMode)r.exam=true;
+  let cls=false;if(s.ctx.classId){r.doneTriggers=r.doneTriggers||[];if(!r.doneTriggers.includes(s.ctx.classId)){r.doneTriggers.push(s.ctx.classId);cls=true}}
+  const pts=r.resets<=3?10:0;S.points+=pts;if(S.examMode)S.examResets=(S.examResets||0)+1;
+  const after=scoreAt(tk);if(after!=null&&after>(S.peakScore||0))S.peakScore=after;
+  const nb=achievements().find(a=>a.got&&!achBefore.includes(a.id));
+  s.res={pts,n:r.resets,tgt:dayTarget(tk),before,after,cls,badge:nb};s.state='done';
+  save();drawSession();releaseWake();
+}
+function releaseWake(){try{if(wakeLock){wakeLock.release();wakeLock=null}}catch(e){}}
+function closeSession(){if(SES){cancelAnimationFrame(SES.raf);SES.run=false}SES=null;releaseWake();$('#session').hidden=true;$('#session').innerHTML='';render(true)}
+
+/* ============ Lights out ============ */
+function recordLightsOut(time,key){
+  const r=S.history[key]||(S.history[key]={resets:0,types:[]});
+  if(r.lightsOut){toast('Lights out is already recorded for tonight','info');return}
+  r.lightsOut=time;r.bed=S.bedtime;if(S.examMode)r.exam=true;
+  const ok=kept(key);let msg=[];
+  if(ok){S.points+=15;msg.push('+15 points for keeping your bedtime')}
+  if(S.stake&&S.stake.status==='active'&&S.stake.night===key){if(ok){S.points+=S.stake.amount;S.stake.status='won';msg.push('stake won +'+S.stake.amount)}else{const l=Math.round(S.stake.amount/2);S.points=Math.max(0,S.points-l);S.stake.status='lost';msg.push('stake lost −'+l)}}
+  save();closeSheet();
+  const L=$('#lo-layer');
+  L.innerHTML=`<div class="lo" role="dialog" aria-label="Lights out"><div class="gap16" style="justify-items:center"><svg class="ic" viewBox="0 0 24 24" style="width:30px;height:30px;color:#8FCBFF">${P.moon}</svg><span class="label" style="color:#7F99BD">Lights out</span><div class="t">${time}</div><p>${ok?'In rhythm. Phone down, see you at '+S.wake+'.':(relToBed(time,S.bedtime)<0?'Earlier than your bedtime. Rest well, and aim for '+S.bedtime+' on most nights.':'Later than planned. No drama. Tomorrow is a fresh bar.')}</p>${msg.length?`<p style="color:#8FCBFF;font-size:14px">${msg.join(' · ')}</p>`:''}
+    <div class="gap8" style="margin-top:18px;width:260px">${S.sample?`<button class="btn block" style="background:#0F2A51;color:#EBF4FF;border:1px solid #234670" data-act="lo-morning">Skip to morning (demo)</button>`:''}<button class="btn block" style="color:#7F99BD" data-act="lo-close">Close</button></div></div></div>`;
+}
+function nightKeyFor(m){return (S.dayOffset===0&&m<toMin(S.wake)+90)?yKey():todayKey()}
+function lightsOut(){
+  const real=new Date(),m=real.getHours()*60+real.getMinutes(),rel=relToBed(fromMin(m),S.bedtime);
+  if(S.dayOffset===0&&rel>=-180&&rel<=240){recordLightsOut(fromMin(m),nightKeyFor(m))}
+  else sheetLightsDemo();
+}
+function advance(){S.dayOffset=(S.dayOffset||0)+1;S.sprint=null;S._stakeAmt=50;save();closeSheet();$('#lo-layer').innerHTML='';const t=now();S.tab='today';render();toast(`It's ${WDL[wdi(t)]} morning (simulated)`,'sun')}
+
+/* ============ Onboarding ============ */
+let OB=0;const OBN=6;
+function showOnb(start){OB=start||0;$('#onb').hidden=false;drawOnb()}
+function drawOnb(){
+  const o=$('#onb');const prog=`<div class="onb-prog">${Array.from({length:OBN},(_,i)=>`<i class="${i<=OB?'on':''}"></i>`).join('')}</div>`;
+  const top=`<div class="onb-top">${OB>0&&OB<OBN?`<button class="xbtn" data-act="ob-back" aria-label="Back">${ic('chev','sm')}</button>`.replace('<svg class="ic sm"','<svg class="ic sm" style="transform:rotate(180deg)"'):'<span style="width:34px"></span>'}${OB<OBN?prog:''}</div>`;
+  let body='',foot='';
+  if(OB===0){
+    body=`<div class="wordmark" style="margin-top:6vh">${ic('mark')}<span>PAUSA</span></div>
+      <h1 class="onb-h" style="font-size:40px">Reset your rhythm, <span class="acc">recharge your potential.</span></h1>
+      <p class="body2" style="font-size:16px">Three minutes of real rest after class. One bedtime you actually keep. Built around a student's week.</p>
+      <div class="field"><label for="ob-name">What should we call you?</label><input class="input" id="ob-name" value="${esc(S.name)}" placeholder="Your first name" maxlength="24" autocomplete="given-name"></div><div id="ob-err"></div>`;
+    foot=`<button class="btn pri block" data-act="ob-next">Get started</button><p class="meta center">${ic('lock','xs').replace('class="ic xs"','class="ic xs" style="display:inline;vertical-align:-3px;margin-right:4px"')}Prototype · your data stays on this device</p>`;
+  }else if(OB===1){
+    body=`<span class="label">Step 1 · Look</span><h1 class="onb-h">Choose how PAUSA looks</h1><p class="body2">Night is designed first, for late study sessions. Sleep always goes deep ocean.</p>
+      <div class="gap8">${[['night','Night','Deep ocean navy, built for evenings','#071A33','#123157','#8FCBFF'],['day','Day','Sea foam white and sky blue','#EEF5FC','#FFFFFF','#2B7DD1'],['auto','Auto','Follows your phone setting','#071A33','#EEF5FC','#8FCBFF']].map(t=>`<button class="choice" data-act="ob-theme" data-arg="${t[0]}" aria-pressed="${S.theme===t[0]}"><span class="swatch" style="background:${t[3]}"><i style="background:${t[5]};width:60%"></i><i style="background:${t[4]}"></i><i style="background:${t[4]};width:70%"></i></span><div class="grow"><div class="row-t">${t[1]}${t[0]==='night'?' <span class="pill" style="margin-left:4px">Recommended</span>':''}</div><div class="row-s">${t[2]}</div></div><span class="radio"></span></button>`).join('')}</div>`;
+    foot=`<button class="btn pri block" data-act="ob-next">Continue</button>`;
+  }else if(OB===2){
+    const w=sleepWin();
+    body=`<span class="label">Step 2 · Night</span><h1 class="onb-h">Set a bedtime you can really keep</h1><p class="body2">Not your ideal. The one that works on most class nights. You can change it any time.</p>
+      <div class="panel pad gap16"><div class="gap8"><span class="label">Lights out</span><div class="stepper"><button class="sbtn" data-act="bed" data-arg="-15" aria-label="Earlier">${ic('minus','sm')}</button><span class="sval">${S.bedtime}</span><button class="sbtn" data-act="bed" data-arg="15" aria-label="Later">${ic('plus','sm')}</button></div></div><div class="hr"></div>
+      <div class="gap8"><span class="label">Wake up</span><div class="stepper"><button class="sbtn" data-act="wake" data-arg="-15" aria-label="Earlier">${ic('minus','sm')}</button><span class="sval">${S.wake}</span><button class="sbtn" data-act="wake" data-arg="15" aria-label="Later">${ic('plus','sm')}</button></div></div></div>
+      <div class="between"><span class="body2">Sleep window</span><span class="row-t">${fmtDur(w)}</span></div>
+      ${w<360?`<p class="err">${ic('info','xs')}Under 6 hours. Try a little earlier, it'll be easier to sustain.</p>`:`<p class="meta">Wind-down reminder at ${windStart()}, 30 minutes before.</p>`}`;
+    foot=`<button class="btn pri block" data-act="ob-next">Continue</button>`;
+  }else if(OB===3){
+    const t=S.timetable[0]||[];
+    body=`<span class="label">Step 3 · Day</span><h1 class="onb-h">Add your timetable</h1><p class="body2">PAUSA times your resets to when class ends. That's what turns intention into habit.</p>
+      <button class="choice" data-act="ob-tt" data-arg="sample" aria-pressed="${S.useSample}"><span class="ico-badge">${ic('campus','sm')}</span><div class="grow"><div class="row-t">Use a sample BUI week</div><div class="row-s">Monday: ${t.map(c=>c.code).join(', ')||'classes'}. Editable later.</div></div><span class="radio"></span></button>
+      <button class="choice" data-act="ob-tt" data-arg="empty" aria-pressed="${!S.useSample}"><span class="ico-badge ice">${ic('plus','sm')}</span><div class="grow"><div class="row-t">Start with an empty week</div><div class="row-s">Add classes from Today when you're ready.</div></div><span class="radio"></span></button>
+      <p class="note">${ic('info','xs')}In the full app, timetables import from the university system.</p>`;
+    foot=`<button class="btn pri block" data-act="ob-next">Continue</button>`;
+  }else if(OB===4){
+    body=`<span class="label">Step 4 · Recovery</span><h1 class="onb-h">What helps you recover?</h1><p class="body2">Pick at least one. PAUSA rotates them so your if-then resets stay fresh.</p>
+      <div class="group">${Object.keys(TYPES).map(k=>`<div class="row"><span class="mod-ic" style="width:42px;height:42px">${ic(TYPES[k].icon)}</span><div class="grow"><div class="row-t">${TYPES[k].long}</div><div class="row-s">${TYPES[k].desc}</div></div><button class="switch" role="switch" aria-label="${TYPES[k].long}" aria-checked="${!!S.prefs[k]}" data-act="pref" data-arg="${k}"></button></div>`).join('')}</div><div id="ob-err"></div>
+      <div class="gap8"><span class="label">Daily target</span><div class="seg" role="group" aria-label="Daily target">${[1,2].map(n=>`<button data-act="target" data-arg="${n}" aria-pressed="${(S.resetTarget||1)===n}">${n} reset${n>1?'s':''} a day</button>`).join('')}</div><p class="meta">Start with one. Consistency beats ambition.</p></div>
+      <div class="row panel"><div class="grow"><div class="row-t">Plan a Me-time block</div><div class="row-s">Guilt-free time before wind-down, so it doesn't come out of your sleep</div></div><button class="switch" role="switch" aria-label="Me-time block" aria-checked="${S.meTime}" data-act="metime"></button></div>`;
+    foot=`<button class="btn pri block" data-act="ob-next">Continue</button>`;
+  }else if(OB===5){
+    body=`<span class="label">Step 5 · How it works</span><h1 class="onb-h">One reset by day. One bedtime by night.</h1>
+      <div class="panel pad gap12"><div class="ifthen"><span>If</span><b>MKT201 ends</b><span class="arrow">→</span><span>then</span><b>Eyes</b></div><p class="body2">An if-then plan, tied to your timetable. It's the simplest way to start a habit.</p></div>
+      <div class="panel pad gap12"><span class="label acc">Your Pausa Score</span><p class="body2">Measures your rhythm, not your sleep: lights out on time (40), daily resets (30), wind-down (15) and steadiness (15), averaged over 7 days. One bad night bends it. It never breaks it.</p>
+        <div class="flex wrap" style="gap:6px">${['Offbeat','Warming up','In tempo','In rhythm'].map((x,i)=>`<span class="chip ${i===3?'acc':''}">${x}</span>`).join('')}</div></div>
+      <button class="choice" data-act="ob-hist" aria-pressed="${S.withHistory}"><div class="grow"><div class="row-t">Demo mode: add two weeks of sample history</div><div class="row-s">For presentations only. Leave off to start your own rhythm today.</div></div><span class="radio"></span></button>`;
+    foot=`<button class="btn pri block" data-act="ob-finish">Open my dashboard</button>`;
+  }else{
+    body=`<div class="loader"><svg viewBox="0 0 200 60" width="220" height="66" aria-hidden="true"><path d="M5 40 C30 40 30 15 55 15 S80 48 105 48 130 18 155 18 175 34 195 30" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/></svg><div class="ses-cue" style="font-size:24px">Building your rhythm…</div><p class="meta">Setting bedtime ${S.bedtime}, wind-down ${windStart()}</p></div>`;
+  }
+  o.innerHTML=top+`<div class="onb-body enter">${body}</div>`+(foot?`<div class="onb-foot">${foot}</div>`:'');
+}
+function obNext(){
+  if(OB===0){const n=$('#ob-name').value.trim();if(!n){$('#ob-err').innerHTML=`<p class="err">${ic('info','xs')}Add a name so PAUSA can greet you.</p>`;$('#ob-name').focus();return}S.name=n}
+  if(OB===4&&!Object.values(S.prefs).some(Boolean)){$('#ob-err').innerHTML=`<p class="err">${ic('info','xs')}Choose at least one type of reset.</p>`;return}
+  OB++;save();drawOnb();
+}
+function obFinish(){
+  const firstTime=!S.onboarded;
+  if(!S.useSample)S.timetable=[[],[],[],[],[],[],[]];
+  else if(firstTime&&!S.timetable.some(d=>d.length))S.timetable=sampleTimetable();
+  if(firstTime){S.history={};S.points=0;if(S.withHistory)seedHistory();T()}
+  S.onboarded=true;S.tab='today';save();
+  OB=6;drawOnb();
+  setTimeout(()=>{$('#onb').hidden=true;$('#onb').innerHTML='';shownScore=null;render();toast(`Welcome, ${S.name}. Your first reset is waiting.`,'mark')},1500);
+}
+
+/* ============ Actions ============ */
+const A={
+  tab:el=>go(el.dataset.arg),
+  'tab-close':el=>{closeSheet();go(el.dataset.arg)},
+  score:sheetScore,
+  settings:sheetSettings,
+  'close-sheet':closeSheet,
+  'start-reset':el=>startSession(el.dataset.arg,{classId:el.dataset.cls||null}),
+  exam:()=>{S.examMode=!S.examMode;if(S.examMode)T().exam=true;render(true);toast(S.examMode?'Exam Week Mode on: targets adjusted':'Exam Week Mode off',S.examMode?'book':'info')},
+  checkin:el=>{const y=rec(yKey());if(y){y.wake=el.dataset.arg;S.points+=5;render(true);toast('Logged. +5 points','sun')}},
+  bed:el=>{S.bedtime=fromMin(toMin(S.bedtime)+(+el.dataset.arg));if(S.meTime&&toMin(S.meStart)>=toMin(windStart()))S.meStart=fromMin(toMin(windStart())-45);save();if(!$('#onb').hidden)drawOnb();else render(true)},
+  wake:el=>{S.wake=fromMin(toMin(S.wake)+(+el.dataset.arg));save();if(!$('#onb').hidden)drawOnb();else render(true)},
+  me:el=>{const v=toMin(S.meStart)+(+el.dataset.arg),ws=toMin(windStart());if(v>=ws-15||v<ws-180){toast(v>=ws-15?'Me-time needs at least 15 minutes':'Keep it under 3 hours','info');return}S.meStart=fromMin(v);render(true)},
+  metime:()=>{S.meTime=!S.meTime;save();if(!$('#onb').hidden)drawOnb();else render(true)},
+  'wind-rem':()=>{S.windReminder=!S.windReminder;render(true);toast(S.windReminder?`Reminder set for ${windStart()} (in-app banner in this prototype)`:'Wind-down reminder off',S.windReminder?'bell':'info')},
+  wd:el=>{const r=T();r.wd=r.wd||{};r.wd[el.dataset.arg]=!r.wd[el.dataset.arg];const all=['close','phone','dim','breathe'].every(k=>r.wd[k]);if(all&&!r.windDown){r.windDown=true;S.points+=5;toast('Wind-down complete. +5 points, +15 to tonight','moon')}render(true)},
+  'lights-out':lightsOut,
+  'lo-real':()=>{const d=new Date(),m=d.getHours()*60+d.getMinutes();recordLightsOut(fromMin(m),nightKeyFor(m))},
+  'lo-sim':el=>recordLightsOut(fromMin(toMin(S.bedtime)+(+el.dataset.arg)),todayKey()),
+  'lo-close':()=>{$('#lo-layer').innerHTML='';render(true)},
+  'lo-morning':advance,
+  advance,
+  realdate:()=>{S.dayOffset=0;save();closeSheet();render();toast('Back to the real date','today')},
+  'stake-amt':el=>{S._stakeAmt=+el.dataset.arg;render(true)},
+  stake:()=>{const a=S._stakeAmt||50;if(S.points<a){toast('Not enough points for that stake','info');return}S.stake={night:todayKey(),amount:a,status:'active'};render(true);toast(`${a} points staked on ${S.bedtime}`,'diamond')},
+  unstake:()=>{S.stake=null;render(true);toast('Stake cancelled','info')},
+  grace:()=>{const k=yKey();const r=S.history[k]||(S.history[k]={resets:0,types:[]});r.grace=true;render(true);toast('Grace Night applied. Streak protected.','shield')},
+  report:sheetReport,
+  'copy-report':()=>{const t=S._report||'';try{navigator.clipboard.writeText(t).then(()=>toast('Summary copied','copy'),()=>toast('Copy blocked here. Select the text manually.','info'))}catch(e){toast('Copy blocked here','info')}},
+  badge:el=>sheetBadge(el.dataset.arg),
+  redeem:el=>{const v=VOUCHERS.find(x=>x.id===el.dataset.arg);if(S.points<v.cost){toast(`You need ${v.cost-S.points} more points`,'info');return}S.points-=v.cost;S.vouchers.push({id:v.id,code:'PSA-'+Math.random().toString(36).slice(2,6).toUpperCase()+'-SIM'});render(true);sheetVoucher(v.id)},
+  'show-voucher':el=>sheetVoucher(el.dataset.arg),
+  nudge:el=>sheetNudge(el.dataset.arg),
+  'send-nudge':el=>{closeSheet();S.nudges=(S.nudges||0)+1;save();toast(`Sent to ${el.dataset.arg} (simulated)`,'heart')},
+  join:el=>{const id=el.dataset.arg;S.challenges[id]=!S.challenges[id];if(S.challenges[id])S.podJoined=true;render(true);toast(S.challenges[id]?'Joined with your pod':'Left the challenge',S.challenges[id]?'g_pod':'info')},
+  claim:el=>{const c=CHALLENGES.find(x=>x.id===el.dataset.arg);S.claimed[c.id+weekKeys()[0]]=true;S.points+=c.reward;render(true);toast(`+${c.reward} points. Nice work, pod.`,'check')},
+  uni:sheetUni,
+  'edit-tt':()=>sheetTimetable(),
+  'tt-day':el=>sheetTimetable(+el.dataset.arg),
+  'tt-then':el=>{const d=S._ttDay;const c=(S.timetable[d]||[]).find(x=>x.id===el.dataset.arg);if(c){c.then=el.dataset.t||null;save();sheetTimetable(d);render(true)}},
+  'tt-del':el=>{const d=S._ttDay;S.timetable[d]=(S.timetable[d]||[]).filter(x=>x.id!==el.dataset.arg);save();sheetTimetable(d);render(true);toast('Class removed','trash')},
+  'tt-add':()=>{const d=S._ttDay,g=id=>$('#'+id).value.trim();const title=g('tt-title'),start=$('#tt-start').value,end=$('#tt-end').value;const err=$('#tt-err');
+    if(!title){err.innerHTML=`<p class="err">${ic('info','xs')}Add a class name.</p>`;return}
+    if(!start||!end||toMin(end)<=toMin(start)){err.innerHTML=`<p class="err">${ic('info','xs')}The end time must be after the start time.</p>`;return}
+    const clash=(S.timetable[d]||[]).find(c=>toMin(start)<toMin(c.end)&&toMin(end)>toMin(c.start));
+    if(clash){err.innerHTML=`<p class="err">${ic('info','xs')}Overlaps with ${esc(clash.title)} (${clash.start}–${clash.end}).</p>`;return}
+    S.timetable[d].push({id:'c'+Date.now(),title,code:g('tt-code')||'CLASS',start,end,room:g('tt-room')||'TBA',then:$('#tt-then').value||null});save();sheetTimetable(d);render(true);toast(`${title} added to ${WDL[d]}`,'check')},
+  theme:el=>{S.theme=el.dataset.arg;applyTheme();save();sheetSettings();render(true)},
+  target:el=>{S.resetTarget=+el.dataset.arg;save();if(!$('#onb').hidden)drawOnb();else{sheetSettings();render(true)}},
+  pref:el=>{S.prefs[el.dataset.arg]=!S.prefs[el.dataset.arg];save();if(!$('#onb').hidden)drawOnb();else{el.setAttribute('aria-checked',S.prefs[el.dataset.arg]);render(true)}},
+  simulated:sheetSimulated,
+  replay:()=>{closeSheet();showOnb(0)},
+  'erase-ask':()=>{$('#erase-box').innerHTML=`<div class="confirm" style="margin-top:10px"><p class="row-t">Erase everything?</p><p class="body2">Your progress, points and settings on this device will be deleted. This can't be undone.</p><div class="grid2"><button class="btn sec" data-act="erase-no">Keep my data</button><button class="btn ghost warnc" data-act="erase-yes">Erase</button></div></div>`},
+  'erase-no':()=>{$('#erase-box').innerHTML=''},
+  'erase-yes':()=>{try{localStorage.removeItem(KEY)}catch(e){}S=defaults();closeSheet();applyTheme();shownScore=null;showOnb(0)},
+  'sprint-start':()=>{S.sprint={start:Date.now(),dur:50*60*1000};render(true);toast('Sprint started. Phone face down.','sprint')},
+  'sprint-stop':()=>{S.sprint=null;render(true)},
+  'sprint-skip':()=>{if(S.sprint)S.sprint.start=Date.now()-S.sprint.dur;render(true)},
+  'sprint-reset':()=>{S.sprint=null;save();startSession(nextReset().type,{})},
+  'ses-play':play,'ses-pause':pauseS,
+  'ses-end':()=>{if(SES.state==='ready'){closeSession();return}if(SES.run)pauseS();SES.confirm=true;drawCtrl()},
+  'ses-keep':()=>{SES.confirm=false;play()},
+  'ses-quit':()=>{closeSession();toast('Session ended early. It didn\'t count.','info')},
+  'ses-close':closeSession,
+  'ses-speed':el=>{SES.speed=SES.speed>1?1:10;el.textContent=SES.speed>1?'Demo ×10':'1×';el.classList.toggle('acc',SES.speed>1)},
+  'ob-next':obNext,'ob-back':()=>{OB=Math.max(0,OB-1);drawOnb()},
+  'ob-theme':el=>{S.theme=el.dataset.arg;applyTheme();save();drawOnb()},
+  'ob-tt':el=>{S.useSample=el.dataset.arg==='sample';if(S.useSample&&!S.timetable.some(d=>d.length))S.timetable=sampleTimetable();save();drawOnb()},
+  'ob-hist':()=>{S.withHistory=!S.withHistory;save();drawOnb()},
+  'ob-finish':obFinish
+};
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;const f=A[el.dataset.act];if(f){f(el,e)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#sheet-layer').hidden)closeSheet()}});
+
+/* ============ Install (PWA) ============ */
+const IS_WEBAPP=!!document.querySelector('link[rel="manifest"]');
+let installEvt=null;
+const isStandalone=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
+const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const inAppBrowser=()=>/Line\/|Instagram|FBAN|FBAV|FB_IAB|TikTok|Telegram|KAKAOTALK/i.test(navigator.userAgent);
+const canInstallAny=()=>IS_WEBAPP&&!isStandalone()&&(!!installEvt||isIOS()||inAppBrowser());
+const canInstall=()=>canInstallAny()&&!S.installDismissed;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(S.onboarded&&$('#onb').hidden)render(true)});
+window.addEventListener('appinstalled',()=>{installEvt=null;S.installDismissed=true;save();toast('PAUSA is on your home screen','mark')});
+function sheetInstall(){
+  let h=sheetHead('Install','Add PAUSA to your home screen');
+  const step=(n,t,d)=>`<div class="inst-step"><span class="inst-n">${n}</span><div><div class="row-t">${t}</div><div class="row-s">${d}</div></div></div>`;
+  if(inAppBrowser()){
+    h+=`<div class="banner warn">${ic('info')}<div class="grow"><div class="row-t">Open in ${isIOS()?'Safari':'Chrome'} first</div><div class="row-s">Apps like LINE and Instagram can't install web apps.</div></div></div>`;
+    h+=`<div class="group">${step(1,'Tap the ••• or share menu','Top or bottom corner of this screen')}${step(2,isIOS()?'Choose "Open in Safari"':'Choose "Open in Chrome" or "Open in browser"','PAUSA opens in your real browser')}${step(3,'Then add it to your home screen','Follow the steps you will see there')}</div>`;
+    h+=`<button class="btn sec block" data-act="copy-link">${ic('copy','sm')}Copy link instead</button>`;
+  }else if(isIOS()){
+    h+=`<div class="group">${step(1,'Tap Share in Safari','The square with an arrow, in the toolbar (on newer iOS it can sit inside the ••• menu)')}${step(2,'Choose "Add to Home Screen"','Scroll the list down if you don\'t see it')}${step(3,'Tap Add','PAUSA appears next to your other apps')}</div>`;
+  }else{
+    h+=`<div class="group">${step(1,'Open the browser menu','The ⋮ in the top corner of Chrome')}${step(2,'Tap "Install app" or "Add to Home screen"','')}${step(3,'Confirm','PAUSA appears in your app drawer')}</div>`;
+  }
+  h+=`<p class="note">${ic('lock','xs')}Your progress stays on this phone. Installing doesn't create an account.</p>`;
+  openSheet(h);
+}
+A.install=()=>{if(installEvt){installEvt.prompt();installEvt.userChoice.then(()=>{installEvt=null;render(true)}).catch(()=>{})}else sheetInstall()};
+A['install-x']=()=>{S.installDismissed=true;render(true);toast('You can install PAUSA later from your profile','info')};
+A['copy-link']=()=>{const u=location.href.split('#')[0];try{navigator.clipboard.writeText(u).then(()=>toast('Link copied','copy'),()=>toast(u,'info'))}catch(e){toast(u,'info')}};
+
+/* Keep the day fresh when the app comes back (overnight, after midnight) */
+let lastDay=null;
+document.addEventListener('visibilitychange',()=>{if(document.hidden||!S.onboarded||!$('#onb').hidden||SES)return;const k=todayKey();if(k!==lastDay){lastDay=k;T()}render(true)});
+
+/* sprint ticker */
+setInterval(()=>{const el=$('#sprint-time');if(el&&S.sprint){const left=S.sprint.start+S.sprint.dur-Date.now();if(left<=0){render(true);toast('Sprint complete. Time to reset.','sprint')}else el.textContent=fmtClock(left/1000)}},1000);
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(S.theme==='auto')applyTheme()})}catch(e){}
+
+/* ============ Boot ============ */
+applyTheme();
+lastDay=todayKey();
+if(!S.onboarded){render();showOnb(0)}else{T();render()}
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator && location.protocol==='https:'){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
