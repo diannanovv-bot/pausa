@@ -407,6 +407,10 @@ p{margin:0}
 .wordmark{display:flex;align-items:center;gap:12px}
 .wordmark .ic{width:34px;height:34px;color:var(--accent);stroke-width:1.4}
 .wordmark span{font-family:var(--f-ui);font-weight:800;letter-spacing:.3em;font-size:20px}
+.gate{padding-top:6vh}
+.gate-hero{display:grid;justify-items:center;gap:14px;text-align:center}
+.gate-icon{width:96px;height:96px;border-radius:24px;display:grid;place-items:center;background:linear-gradient(180deg,#123A6B,#04102A);color:#BFE0FF;box-shadow:0 18px 40px -14px rgba(96,160,255,.7),inset 0 0 0 1px rgba(255,255,255,.08)}
+.gate-icon .ic{width:58px;height:58px;stroke-width:1.4}
 .loader{display:grid;place-items:center;gap:20px;text-align:center;padding-top:22vh}
 .loader path{stroke-dasharray:400;stroke-dashoffset:400;animation:drawl 1.6s ease forwards}
 @keyframes drawl{to{stroke-dashoffset:0}}
@@ -1453,10 +1457,13 @@ const canInstallAny=()=>IS_WEBAPP&&!isStandalone()&&(!!installEvt||isIOS()||inAp
 const canInstall=()=>canInstallAny()&&!S.installDismissed;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(S.onboarded&&$('#onb').hidden)render(true)});
 window.addEventListener('appinstalled',()=>{installEvt=null;S.installDismissed=true;save();toast('PAUSA is on your home screen','mark')});
-function sheetInstall(){
-  let h=sheetHead('Install','Add PAUSA to your home screen');
-  const step=(n,t,d)=>`<div class="inst-step"><span class="inst-n">${n}</span><div><div class="row-t">${t}</div><div class="row-s">${d}</div></div></div>`;
-  if(inAppBrowser()){
+const isMobile=()=>isIOS()||/Android/i.test(navigator.userAgent);
+function installSteps(){
+  let h='';
+  const step=(n,t,d)=>`<div class="inst-step"><span class="inst-n">${n}</span><div><div class="row-t">${t}</div>${d?`<div class="row-s">${d}</div>`:''}</div></div>`;
+  if(!isMobile()){
+    h+=`<div class="group">${step(1,'Open this link on your phone','PAUSA is made for your iPhone or Android')}${step(2,'Add it to your home screen','Safari: Share → Add to Home Screen · Chrome: ⋮ → Install app')}</div>`;
+  }else if(inAppBrowser()){
     h+=`<div class="banner warn">${ic('info')}<div class="grow"><div class="row-t">Open in ${isIOS()?'Safari':'Chrome'} first</div><div class="row-s">Apps like LINE and Instagram can't install web apps.</div></div></div>`;
     h+=`<div class="group">${step(1,'Tap the ••• or share menu','Top or bottom corner of this screen')}${step(2,isIOS()?'Choose "Open in Safari"':'Choose "Open in Chrome" or "Open in browser"','PAUSA opens in your real browser')}${step(3,'Then add it to your home screen','Follow the steps you will see there')}</div>`;
     h+=`<button class="btn sec block" data-act="copy-link">${ic('copy','sm')}Copy link instead</button>`;
@@ -1465,9 +1472,32 @@ function sheetInstall(){
   }else{
     h+=`<div class="group">${step(1,'Open the browser menu','The ⋮ in the top corner of Chrome')}${step(2,'Tap "Install app" or "Add to Home screen"','')}${step(3,'Confirm','PAUSA appears in your app drawer')}</div>`;
   }
+  return h;
+}
+function sheetInstall(){
+  let h=sheetHead('Install','Add PAUSA to your home screen')+installSteps();
   h+=`<p class="note">${ic('lock','xs')}Your progress stays on this phone. Installing doesn't create an account.</p>`;
   openSheet(h);
 }
+
+/* Install gate: first thing a browser visitor sees, before onboarding */
+const gateWanted=()=>IS_WEBAPP&&!isStandalone()&&!S.onboarded&&!S.gateSkipped;
+function showGate(){
+  const o=$('#onb');o.hidden=false;o.dataset.gate='1';
+  o.innerHTML=`<div class="onb-body enter gate">
+    <div class="gate-hero"><span class="gate-icon">${ic('mark')}</span>
+      <div class="wordmark" style="justify-content:center"><span>PAUSA</span></div>
+      <h1 class="onb-h" style="text-align:center;font-size:30px">Add PAUSA to your home screen</h1>
+      <p class="body2 center" style="font-size:15.5px">It opens full screen like a real app and works offline. No App Store needed.</p></div>
+    ${installEvt?`<button class="btn pri block" data-act="gate-install">${ic('plus','sm')}Install PAUSA</button>`:''}
+    ${installSteps()}
+    <p class="note">${ic('lock','xs')}Free, no account. Your progress stays on your phone.</p>
+  </div>
+  <div class="onb-foot"><button class="btn ghost block" data-act="gate-skip">Continue in browser</button></div>`;
+}
+A['gate-install']=()=>{if(!installEvt)return;installEvt.prompt();installEvt.userChoice.then(c=>{installEvt=null;if(c&&c.outcome==='accepted'){$('#onb').innerHTML=`<div class="onb-body gate"><div class="gate-hero"><span class="gate-icon">${ic('check')}</span><h1 class="onb-h" style="text-align:center;font-size:30px">PAUSA is installed</h1><p class="body2 center">Open it from your home screen to get started.</p></div></div><div class="onb-foot"><button class="btn ghost block" data-act="gate-skip">Continue here instead</button></div>`}else showGate()}).catch(()=>{})};
+A['gate-skip']=()=>{S.gateSkipped=true;save();delete $('#onb').dataset.gate;showOnb(0)};
+window.addEventListener('beforeinstallprompt',()=>{if($('#onb').dataset.gate)showGate()});
 A.install=()=>{if(installEvt){installEvt.prompt();installEvt.userChoice.then(()=>{installEvt=null;render(true)}).catch(()=>{})}else sheetInstall()};
 A['install-x']=()=>{S.installDismissed=true;render(true);toast('You can install PAUSA later from your profile','info')};
 A['copy-link']=()=>{const u=location.href.split('#')[0];try{navigator.clipboard.writeText(u).then(()=>toast('Link copied','copy'),()=>toast(u,'info'))}catch(e){toast(u,'info')}};
@@ -1483,7 +1513,7 @@ try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if
 /* ============ Boot ============ */
 applyTheme();
 lastDay=todayKey();
-if(!S.onboarded){render();showOnb(0)}else{T();render()}
+if(!S.onboarded){render();if(gateWanted())showGate();else showOnb(0)}else{T();render()}
 })();
 </script>
 
