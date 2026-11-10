@@ -1,6 +1,6 @@
 // PAUSA service worker: makes the app open offline after the first visit.
 // Bump VERSION every time you upload a new build so phones pick up the update.
-const VERSION = 'pausa-v5';
+const VERSION = 'pausa-v6';
 const SHELL = ['./', './index.html', './manifest.webmanifest',
   './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
